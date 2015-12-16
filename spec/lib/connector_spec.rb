@@ -9,14 +9,14 @@ describe Connector do
 
   describe 'with isolated-random-named databases' do
 
-    it 'generates two different database names' do
+    xit 'generates two different database names' do
       connector1 = Connector.new
       connector2 = Connector.new
 
       expect(connector1.db_name).not_to eq(connector2.db_name)
     end
 
-    it 'shows databases' do
+    xit 'shows databases' do
       connector = Connector.new
 
       expect(connector.show_databases).to include({database_name: connector.db_name})

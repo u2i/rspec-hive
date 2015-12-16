@@ -3,7 +3,8 @@ require 'tempfile'
 require 'securerandom'
 
 class Connector
-  attr_reader :result, :db_name
+  attr_reader :result
+  attr_accessor :db_name
 
   def initialize(db_name = self.class.generate_db_name)
     @db_name = db_name
@@ -21,16 +22,9 @@ class Connector
     begin
       values.each do |value|
         file.write(value.join(";"))
+        file.write("\n")
       end
-
-
-      p "DUPA"
-      p values
-      p file.path
-      p file.readlines
-
-      p "DUPA"
-
+      file.flush
       connect do |connection|
         connection.execute("load data local inpath '#{file.path}' into table #{table_name}")
       end
@@ -62,6 +56,27 @@ class Connector
                         connection_options) do |connection|
       yield connection
     end
+  end
+
+  def start_connection
+    connection = RBHive::TCLIConnection.new(config[:host], config[:port], connection_options)
+    connection.open
+    connection.open_session
+
+    create_database(connection, db_name)
+    use_database(connection, db_name)
+
+    connection
+  rescue
+    stop_connection(connection)
+    connection
+  end
+
+  def stop_connection(connection)
+    connection.close_session if connection.session
+    connection.close
+  rescue IOError => e
+    # noop
   end
 
   def connect
