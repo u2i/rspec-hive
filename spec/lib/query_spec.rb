@@ -1,7 +1,7 @@
-require_relative '../../lib/connector'
+require_relative '../../hive_tests/lib/hive_tests/connector'
 require 'spec_helper'
-require_relative '../../lib/query'
-require_relative '../../lib/with_hive_connection'
+require_relative '../../hive_tests/lib/hive_tests/query'
+require_relative '../../hive_tests/lib/hive_tests/with_hive_connection'
 
 describe Query do
   extend WithHiveConnection

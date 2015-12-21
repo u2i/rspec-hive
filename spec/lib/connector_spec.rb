@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative '../../lib/connector'
+require 'hive_tests'
 
 describe Connector do
   xit do

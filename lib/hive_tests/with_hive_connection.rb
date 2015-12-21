@@ -1,6 +1,6 @@
 module WithHiveConnection
   def self.extended(mod)
-    mod.let(:hive) { Connector.new }
+    mod.let(:hive) { HiveTests.connector }
 
     mod.let(:connection) { hive.start_connection }
 

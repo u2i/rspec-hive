@@ -4,7 +4,7 @@ require 'securerandom'
 require 'yaml'
 require 'db_helpers'
 require 'table_helpers'
-require 'hive_config'
+require 'configuration'
 
 class Connector
   attr_reader :result
@@ -15,7 +15,7 @@ class Connector
 
   def initialize(db_name = DBHelpers.generate_db_name)
     @db_name = db_name
-    @config = HiveConfig.new(File.join(__dir__, 'docker_config.yml'))
+    @config = Configuration.new(File.join(__dir__, 'docker_config.yml'))
     # transport: :sasl, sasl_params: {username: 'hive', password: ''},
   end
 
