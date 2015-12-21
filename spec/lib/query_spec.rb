@@ -1,19 +1,7 @@
 require_relative '../../lib/connector'
 require 'spec_helper'
 require_relative '../../lib/query'
-
-
-module WithHiveConnection
-  def self.extended(mod)
-    mod.let(:hive) { Connector.new }
-
-    mod.let(:connection) { hive.start_connection }
-
-    mod.after(:all) do
-      hive.stop_connection(connection) unless hive && connection
-    end
-  end
-end
+require_relative '../../lib/with_hive_connection'
 
 describe Query do
   extend WithHiveConnection
@@ -34,29 +22,13 @@ describe Query do
     end
 
     it 'query returns one row' do
-      # #when
-      # subject.run_hive_query(connection)
-
-
-      # #then
-      # require 'pry'; binding.pry
       expect(connection.fetch("SELECT * FROM `#{subject.table_name}` WHERE amount > 3.2").first.values).to eq(['Wojtek', 'Cos', 3.76])
-
-
-      # expect(subject.run_hive_query(hive_connection)).to eq([['Wojtek', 'Cos', 3.76]])
     end
 
     it 'query returns one row 2' do
-      #given
-
-      # #when
-      # subject.run_hive_query(connection)
-
-      # #then
       expect(connection.fetch("SELECT * FROM `#{subject.table_name}` WHERE amount < 3.2").first.values).to eq(['Mikolaj', 'Cos', 1.23])
-
-      # expect(subject.run_hive_query(hive_connection)).to eq([['Wojtek', 'Cos', 3.76]])
     end
   end
 end
+
 

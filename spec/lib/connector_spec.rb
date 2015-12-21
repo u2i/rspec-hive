@@ -8,8 +8,7 @@ describe Connector do
   end
 
   describe 'with isolated-random-named databases' do
-
-    xit 'generates two different database names' do
+    it 'generates two different database names' do
       connector1 = Connector.new
       connector2 = Connector.new
 
@@ -22,21 +21,4 @@ describe Connector do
       expect(connector.show_databases).to include({database_name: connector.db_name})
     end
   end
-
-
-  # describe 'hive query' do
-  #   let(:input_data) do
-  #     [
-  #       ['A', 1],
-  #       ['B', 2]
-  #     ]
-  #   end
-  #   let(:table_name) { 'table' }
-  #
-  #   before { insert_data_into_table(table_name, input_data) }
-  #
-  #   it 'query returns one row' do
-  #     expect(hive.fetch("SELECT * FROM #{table} WHERE C2 > 1")).to eq([['B', 2]])
-  #   end
-  # end
 end
