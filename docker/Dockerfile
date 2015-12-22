@@ -24,7 +24,7 @@ RUN printf 'export HADOOP_HOME=%s\nexport JAVA_HOME=%s\n' $HOME/hadoop/hadoop-1.
 #RUN bin/sh /etc/profile.d/hive_env_vars.sh
 RUN mkdir -p /tmp/root/
 RUN mkdir -p /tmp/warehouse
-RUN mkdir -p /Users/Shared/tmp/spec-tmp-files
+RUN mkdir -p /tmp/spec-tmp-files
 #CMD bash
 # CMD ls
 #CMD /usr/bin/java -version

@@ -1,23 +1,26 @@
 require 'hive_tests/configuration'
-require 'hive_tests/connector'
-require 'hive_tests/db_helpers'
-require 'hive_tests/query'
-require 'hive_tests/table_helpers'
 require 'hive_tests/version'
+require 'hive_tests/connection_delegator'
+require 'hive_tests/connector'
 require 'hive_tests/with_hive_connection'
 
 module HiveTests
-  def self.configure(file_name=nil)
-    @configuration = Configuration.new(file_name) if file_name
-    yield(configuration) if block_given?
-    configuration
-  end
+  attr_reader :configuration
 
-  def self.configuration
-    @configuration ||= Configuration.new
+  def self.configure(file_name=nil)
+    @configuration = new_configuration(file_name)
+    yield(@configuration) if block_given?
+    @configuration
   end
 
   def self.connector
-    Connector.new(configuration)
+    @configuration ||= Configuration.new
+    Connector.new(@configuration)
   end
+
+  def self.new_configuration(file_name)
+    Configuration.new(file_name)
+  end
+
+  private_class_method :new_configuration
 end
