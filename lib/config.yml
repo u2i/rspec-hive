@@ -3,3 +3,4 @@ hive:
   port: 10000
   host_shared_directory_path: /Users/Shared/tmp/spec-tmp-files
   docker_shared_directory_path: /tmp/spec-tmp-files
+  hive_version: 10

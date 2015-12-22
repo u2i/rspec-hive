@@ -72,10 +72,10 @@ module HiveTests
 
     def connection_options
       {
-        hive_version: 10,
+        hive_version: @config.hive_version,
         transport: :sasl,
         sasl_params: {},
-        logger: Logger.new(STDOUT)
+        logger: @config.logger
       }
     end
   end
