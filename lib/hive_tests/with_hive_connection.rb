@@ -5,7 +5,7 @@ module HiveTests
 
       mod.let(:connection) { hive.start_connection }
 
-      mod.after(:all) do
+      mod.after(:each) do
         hive.stop_connection(connection) unless hive && connection
       end
     end
