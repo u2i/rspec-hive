@@ -5,7 +5,7 @@ require 'tmpdir'
 namespace :hive_tests do
   namespace :config do
     desc 'Generates example config file. Accepts directory to file.'
-    task :generate_default, [:config_directory] do |_, args|
+    task :generate_default, [:config_directory, :config_file_name] do |_, args|
       require 'rbconfig'
 
       host_os = RbConfig::CONFIG['host_os']
@@ -22,7 +22,10 @@ namespace :hive_tests do
             'hive_version' => '10'
           }
       }
-      file_path = File.join(args[:config_directory], 'hive_tests_config.yml')
+      file_path = File.join(
+        args[:config_directory],
+        args[:config_file_name] || 'hive_tests_config.yml'
+      )
       File.open(file_path, 'w+') do |f|
         f.write default_values.to_yaml
         puts "Default config written to #{f.path}".green
