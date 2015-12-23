@@ -1,6 +1,11 @@
+inherit_from: .rubocop_u2i.yml
+
 AllCops:
   Exclude:
     - spec/spec_helper.rb
 
-Documentation:
-  Enabled: false
+Metrics/LineLength:
+  Max: 80
+  Enabled: true
+  Exclude:
+    - spec/**/*
