@@ -12,6 +12,7 @@ class Query
   end
 
   def run_hive_query(connection)
-    connection.execute("SELECT * FROM `#{table_schema.name}` WHERE `amount` > 2.5")
+    query = "SELECT * FROM `#{table_schema.name}` WHERE `amount` > 2.5"
+    connection.execute(query)
   end
 end

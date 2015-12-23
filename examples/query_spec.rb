@@ -2,7 +2,7 @@ require 'spec_helper'
 require_relative 'query'
 
 describe Query do
-  extend HiveTests::WithHiveConnection
+  include HiveTests::WithHiveConnection
 
   subject { described_class.new }
 
@@ -15,24 +15,26 @@ describe Query do
     end
 
     before do
-        connection.execute(subject.table_schema.create_table_statement)
-        connection.load_into_table(subject.table_name, input_data)
+      connection.execute(subject.table_schema.create_table_statement)
+      connection.load_into_table(subject.table_name, input_data)
     end
 
     it 'query returns one row' do
-      expect(connection.fetch("SELECT * FROM `#{subject.table_name}` WHERE amount > 3.2").first.values).to contain_exactly(
-                                                                                                             a_string_matching('Wojtek'),
-                                                                                                             a_string_matching('Cos'),
-                                                                                                             a_string_matching(/3\.7.*/))
+      query = "SELECT * FROM `#{subject.table_name}` WHERE amount > 3.2"
+      query_result = connection.fetch(query).first.values
+      expect(query_result).to contain_exactly(
+        a_string_matching('Wojtek'),
+        a_string_matching('Cos'),
+        a_string_matching(/3\.7.*/))
     end
 
     it 'query returns one row 2' do
-      expect(connection.fetch("SELECT * FROM `#{subject.table_name}` WHERE amount < 3.2").first.values).to contain_exactly(
-                                                                                                                             a_string_matching('Mikolaj'),
-                                                                                                                             a_string_matching('Cos'),
-                                                                                                                             a_string_matching(/1\.2.*/))
+      query = "SELECT * FROM `#{subject.table_name}` WHERE amount < 3.2"
+      query_result = connection.fetch(query).first.values
+      expect(query_result).to contain_exactly(
+        a_string_matching('Mikolaj'),
+        a_string_matching('Cos'),
+        a_string_matching(/1\.2.*/))
     end
   end
 end
-
-

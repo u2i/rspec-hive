@@ -35,7 +35,13 @@ module HiveTests
       fetch('SHOW DATABASES')
     end
 
+    def switch_database(db_name)
+      create_database(db_name)
+      use_database(db_name)
+    end
+
     private
+
     def load_file_to_hive_table(table_name, path)
       execute("load data local inpath '#{path}' into table #{table_name}")
     end
@@ -45,7 +51,7 @@ module HiveTests
     end
 
     def write_values_to_file(file, values)
-      values.each { |value| file.puts (value.join(';'))  }
+      values.each { |value| file.puts(value.join(';')) }
       file.flush
     end
   end

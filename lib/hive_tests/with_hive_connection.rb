@@ -1,11 +1,24 @@
 module HiveTests
   module WithHiveConnection
-    def self.extended(mod)
-      mod.let(:hive) { HiveTests.connector }
+    def hive
+      HiveTests.connector
+    end
 
-      mod.let(:connection) { hive.start_connection }
+    def connection
+      @connection ||= hive.start_connection
+    end
 
-      mod.after(:each) do
+    def self.included(mod)
+      mod.before(:all) do
+        connection
+      end
+
+      mod.before(:each) do
+        # TODO: connection.drop_database ?
+        connection.switch_database(HiveTests::DbName.random_name)
+      end
+
+      mod.after(:all) do
         hive.stop_connection(connection) unless hive && connection
       end
     end

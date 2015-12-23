@@ -1,30 +1,22 @@
 require 'rbhive'
 require 'tempfile'
-require 'securerandom'
 require 'yaml'
 
 module HiveTests
   class Connector
     attr_reader :result, :config
-    attr_accessor :db_name
 
-    def initialize(configuration, db_name = self.class.generate_random_name)
-      @db_name = db_name
+    def initialize(configuration)
       @config = configuration
       # transport: :sasl, sasl_params: {username: 'hive', password: ''},
     end
 
-    def start_connection
-      connection = RBHive::TCLIConnection.new(@config.host, @config.port, connection_options)
-      connection = HiveTests::ConnectionDelegator.new(connection, @config)
-      connection.open
-      connection.open_session
-
-      connection.create_database(db_name)
-      connection.use_database(db_name)
+    def start_connection(db_name = HiveTests::DbName.random_name)
+      connection = open_connection
+      connection.switch_database(db_name)
       connection
 
-    rescue Thrift::ApplicationException => e
+    rescue Thrift::ApplicationException => _
       stop_connection(connection)
       connection
     end
@@ -33,41 +25,31 @@ module HiveTests
       connection.close_session if connection.session
       connection.close
     rescue IOError => e
-      # noop
+      config.logger.fatal('An exception was thrown during close connection')
+      config.logger.fatal(e)
     end
 
-    def connection
+    def tlcli_connect
       RBHive.tcli_connect(@config.host,
                           @config.port,
                           connection_options) do |connection|
-        yield connection
+        yield HiveTests::ConnectionDelegator.new(connection, @config)
       end
-    end
-
-    def connect
-      connection do |connection|
-        begin
-          connection.create_database(db_name)
-          connection.use_database(db_name)
-          yield connection
-        ensure
-          connection.drop_database(db_name)
-        end
-      end
-    end
-
-    def self.generate_random_name
-      "#{timestamp}_#{random_key}"
     end
 
     private
 
-    def self.timestamp
-      Time.now.getutc.to_i.to_s
-    end
+    def open_connection
+      connection = RBHive::TCLIConnection.new(
+        @config.host,
+        @config.port,
+        connection_options
+      )
+      connection = HiveTests::ConnectionDelegator.new(connection, @config)
 
-    def self.random_key
-      SecureRandom.uuid.gsub!('-', '')
+      connection.open
+      connection.open_session
+      connection
     end
 
     def connection_options

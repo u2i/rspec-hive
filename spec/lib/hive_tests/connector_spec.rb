@@ -4,27 +4,62 @@ describe HiveTests::Connector do
   describe '#start_connection' do
     let(:tcli_connection) { double(RBHive::TCLIConnection) }
     let(:connection_delegator) { double(HiveTests::ConnectionDelegator) }
-    let(:db_name) { 'test' }
     let(:host) { '127.0.0.1' }
     let(:port) { '10000' }
     let(:options_mock) { double('options') }
-    let(:configuration) { double(HiveTests::Configuration, host: host, port: port) }
-
-    before do
-      allow(subject).to receive(:connection_options) { options_mock }
-      expect(RBHive::TCLIConnection).to receive(:new).with(host, port, options_mock) { tcli_connection }
-      expect(HiveTests::ConnectionDelegator).to receive(:new).with(tcli_connection, configuration) { connection_delegator }
-
-      expect(connection_delegator).to receive(:open).once
-      expect(connection_delegator).to receive(:open_session).once
-      expect(connection_delegator).to receive(:create_database).once
-      expect(connection_delegator).to receive(:use_database).once
+    let(:configuration) do
+      double(
+        HiveTests::Configuration,
+        host: host,
+        port: port
+      )
     end
 
-    subject { described_class.new(configuration, db_name) }
+    context 'when db_name is provided' do
+      let(:db_name) { 'test' }
 
-    it do
-      expect(subject.start_connection).to equal(connection_delegator)
+      before do
+        allow(subject).to receive(:connection_options) { options_mock }
+        expect(RBHive::TCLIConnection).to receive(:new)
+          .with(host, port, options_mock) { tcli_connection }
+        expect(HiveTests::ConnectionDelegator).to receive(:new)
+          .with(tcli_connection, configuration) { connection_delegator }
+
+        expect(connection_delegator).to receive(:open).once
+        expect(connection_delegator).to receive(:open_session).once
+        expect(connection_delegator).to receive(:switch_database)
+          .with(db_name).once
+      end
+
+      subject { described_class.new(configuration) }
+
+      it do
+        expect(subject.start_connection(db_name)).to equal(connection_delegator)
+      end
+    end
+
+    context 'when db_name is not provided' do
+      let(:db_random_name) { 'rand123' }
+
+      before do
+        allow(subject).to receive(:connection_options) { options_mock }
+        expect(HiveTests::DbName).to receive(:random_name) { db_random_name }
+        expect(RBHive::TCLIConnection).to receive(:new)
+          .with(host, port, options_mock) { tcli_connection }
+        expect(HiveTests::ConnectionDelegator).to receive(:new)
+          .with(tcli_connection, configuration) { connection_delegator }
+
+        expect(connection_delegator).to receive(:open).once
+        expect(connection_delegator).to receive(:open_session).once
+        expect(connection_delegator).to receive(:switch_database)
+          .with(db_random_name).once
+      end
+
+      subject { described_class.new(configuration) }
+
+      it do
+        expect(subject.start_connection).to equal(connection_delegator)
+      end
     end
   end
 end

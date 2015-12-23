@@ -4,8 +4,12 @@ describe HiveTests::ConnectionDelegator do
   describe '#load_into_table' do
     let(:host_shared_directory_path) { '/tmp/host' }
     let(:docker_file_path) { '/tmp/docked/test_file' }
-    let(:config) { double(HiveTests::Configuration,
-                          host_shared_directory_path: host_shared_directory_path) }
+    let(:config) do
+      double(
+        HiveTests::Configuration,
+        host_shared_directory_path: host_shared_directory_path
+      )
+    end
     let(:connection) { double('Connection') }
     let(:file_mock) { double(Tempfile) }
 
@@ -13,10 +17,17 @@ describe HiveTests::ConnectionDelegator do
     let(:values) { ['a', 'b', 1] }
 
     before do
-      expect(Tempfile).to receive(:open).with(table_name, host_shared_directory_path).and_yield(file_mock)
-      expect(subject).to receive(:translate_to_docker_path).with(file_mock) { docker_file_path }
-      expect(subject).to receive(:write_values_to_file).with(file_mock, values).once
-      expect(subject).to receive(:load_file_to_hive_table).with(table_name, docker_file_path).once
+      expect(Tempfile).to receive(:open)
+        .with(table_name, host_shared_directory_path).and_yield(file_mock)
+
+      expect(subject).to receive(:translate_to_docker_path)
+        .with(file_mock) { docker_file_path }
+
+      expect(subject).to receive(:write_values_to_file)
+        .with(file_mock, values).once
+
+      expect(subject).to receive(:load_file_to_hive_table)
+        .with(table_name, docker_file_path).once
     end
 
     subject { described_class.new(connection, config) }
@@ -28,8 +39,10 @@ describe HiveTests::ConnectionDelegator do
 
   describe '#write_values_to_file' do
     let(:file) { StringIO.new }
-    let(:values) { [['a', 'b', 1],
-                    ['aa', 'bb', 22]] }
+    let(:values) do
+      [['a', 'b', 1],
+       ['aa', 'bb', 22]]
+    end
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
     let(:expected_file_content) { "a;b;1\naa;bb;22\n" }
@@ -47,13 +60,15 @@ describe HiveTests::ConnectionDelegator do
     let(:config) { double('Config') }
     let(:table_name) { 'test_table' }
     let(:file_path) { '/tmp/test' }
-    let(:execute_text) { "load data local inpath '/tmp/test' into table test_table" }
+    let(:execute_text) do
+      "load data local inpath '/tmp/test' into table test_table"
+    end
 
     before do
       expect(connection).to receive(:execute).with(execute_text)
     end
 
-    subject { described_class.new(connection, config)}
+    subject { described_class.new(connection, config) }
 
     it do
       subject.send(:load_file_to_hive_table, table_name, file_path)
@@ -68,8 +83,12 @@ describe HiveTests::ConnectionDelegator do
 
     let(:connection) { double('Connection') }
     let(:docker_shared_directory_path) { '/tmp/docker' }
-    let(:config) { double(HiveTests::Configuration,
-                          docker_shared_directory_path: docker_shared_directory_path) }
+    let(:config) do
+      double(
+        HiveTests::Configuration,
+        docker_shared_directory_path: docker_shared_directory_path
+      )
+    end
 
     before do
       expect(file_mock).to receive(:path) { file_host_path }
@@ -78,7 +97,8 @@ describe HiveTests::ConnectionDelegator do
     subject { described_class.new(connection, config) }
 
     it do
-      expect(subject.send(:translate_to_docker_path, file_mock)).to eq(expected_file_path)
+      expect(subject.send(:translate_to_docker_path, file_mock))
+        .to eq(expected_file_path)
     end
   end
 
@@ -162,6 +182,24 @@ describe HiveTests::ConnectionDelegator do
 
     it do
       subject.show_databases
+    end
+  end
+
+  describe '#switch database' do
+    let(:connection) { double('Connection') }
+    let(:config) { double('Config') }
+
+    let(:db_name) { 'test_db' }
+
+    before do
+      expect(subject).to receive(:create_database).once
+      expect(subject).to receive(:use_database).once
+    end
+
+    subject { described_class.new(connection, config) }
+
+    it do
+      subject.switch_database(db_name)
     end
   end
 end

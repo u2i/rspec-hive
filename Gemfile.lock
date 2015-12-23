@@ -67,10 +67,10 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.7)
-  guard
-  guard-rspec
+  guard (~> 2.6)
+  guard-rspec (~> 4.3)
   hive_tests!
   rake (~> 10.0)
   rbhive (~> 0.6.0)
   rspec (~> 3.4)
-  rspec-its (~> 1.2.0)
+  rspec-its (~> 1.2)
