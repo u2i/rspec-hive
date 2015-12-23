@@ -16,6 +16,12 @@
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+if ENV['COVERAGE']
+  require 'codeclimate-test-reporter'
+  CodeClimate::TestReporter.start
+end
+
 RSpec.configure do |config|
   require 'hive_tests'
   require 'rspec/its'

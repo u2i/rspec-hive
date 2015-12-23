@@ -1,3 +1,7 @@
+[![Code Climate](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/badges/85abbc07acb75f664185/gpa.svg)](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/feed)
+[![Test Coverage](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/badges/85abbc07acb75f664185/coverage.svg)](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/coverage)
+[![Issue Count](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/badges/85abbc07acb75f664185/issue_count.svg)](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/feed)
+
 # HiveTests
 
 HiveTests is a utility gem to help you write beautiful rspec tests for hive queries. The idea is simple - you just launch a docker machine with hadoop and hive installed (on tips how to do it check out our example Dockerfile), then call `HiveTests.configure` with config of host, port and shared directories of this docker machine and finally just extend a spec with `HiveTests::WithHiveConnection`.
