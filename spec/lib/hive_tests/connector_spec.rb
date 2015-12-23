@@ -20,15 +20,15 @@ describe HiveTests::Connector do
 
       before do
         allow(subject).to receive(:connection_options) { options_mock }
-        expect(RBHive::TCLIConnection).to receive(:new)
-          .with(host, port, options_mock) { tcli_connection }
-        expect(HiveTests::ConnectionDelegator).to receive(:new)
-          .with(tcli_connection, configuration) { connection_delegator }
+        expect(RBHive::TCLIConnection).to receive(:new).
+          with(host, port, options_mock) { tcli_connection }
+        expect(HiveTests::ConnectionDelegator).to receive(:new).
+          with(tcli_connection, configuration) { connection_delegator }
 
         expect(connection_delegator).to receive(:open).once
         expect(connection_delegator).to receive(:open_session).once
-        expect(connection_delegator).to receive(:switch_database)
-          .with(db_name).once
+        expect(connection_delegator).to receive(:switch_database).
+          with(db_name).once
       end
 
       subject { described_class.new(configuration) }
@@ -44,15 +44,15 @@ describe HiveTests::Connector do
       before do
         allow(subject).to receive(:connection_options) { options_mock }
         expect(HiveTests::DbName).to receive(:random_name) { db_random_name }
-        expect(RBHive::TCLIConnection).to receive(:new)
-          .with(host, port, options_mock) { tcli_connection }
-        expect(HiveTests::ConnectionDelegator).to receive(:new)
-          .with(tcli_connection, configuration) { connection_delegator }
+        expect(RBHive::TCLIConnection).to receive(:new).
+          with(host, port, options_mock) { tcli_connection }
+        expect(HiveTests::ConnectionDelegator).to receive(:new).
+          with(tcli_connection, configuration) { connection_delegator }
 
         expect(connection_delegator).to receive(:open).once
         expect(connection_delegator).to receive(:open_session).once
-        expect(connection_delegator).to receive(:switch_database)
-          .with(db_random_name).once
+        expect(connection_delegator).to receive(:switch_database).
+          with(db_random_name).once
       end
 
       subject { described_class.new(configuration) }
