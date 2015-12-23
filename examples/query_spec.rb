@@ -1,5 +1,6 @@
 require 'spec_helper'
 require_relative 'query'
+require_relative 'config_helper'
 
 describe Query do
   include HiveTests::WithHiveConnection
