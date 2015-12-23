@@ -3,7 +3,12 @@ load 'lib/rake_tasks/docker.rake'
 
 begin
   require 'rspec/core/rake_task'
+
   RSpec::Core::RakeTask.new(:spec)
+
+  RSpec::Core::RakeTask.new(:hive_spec) do |t|
+    t.pattern = 'examples/**/*_spec.rb'
+  end
 rescue LoadError
   puts 'Cannot load rspec Rake tasks'
 end
