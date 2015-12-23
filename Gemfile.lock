@@ -2,6 +2,8 @@ PATH
   remote: .
   specs:
     hive_tests (0.0.1)
+      colorize
+      rake (~> 10.0)
 
 GEM
   remote: https://rubygems.org/
@@ -9,6 +11,7 @@ GEM
     celluloid (0.16.0)
       timers (~> 4.0.0)
     coderay (1.1.0)
+    colorize (0.7.7)
     diff-lcs (1.2.5)
     ffi (1.9.3)
     formatador (0.2.5)
@@ -70,7 +73,6 @@ DEPENDENCIES
   guard (~> 2.6)
   guard-rspec (~> 4.3)
   hive_tests!
-  rake (~> 10.0)
   rbhive (~> 0.6.0)
   rspec (~> 3.4)
   rspec-its (~> 1.2)
