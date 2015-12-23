@@ -1,3 +1,5 @@
+require 'tmpdir'
+
 module HiveTests
   class Configuration
     attr_accessor :host,
@@ -11,7 +13,8 @@ module HiveTests
       if path_to_config_file.nil?
         load_default_variables
       else
-        config = YAML.load_file(path_to_config_file)['hive']
+        interpolated = ERB.new(File.read(path_to_config_file)).result
+        config = YAML.load(interpolated)['hive']
         load_variables_from_config(config)
       end
       @logger = Logger.new(STDOUT)
@@ -21,7 +24,7 @@ module HiveTests
 
     def load_default_variables
       @host = '192.168.99.100'
-      @port = '10000'
+      @port = 10000
       @host_shared_directory_path = '/Users/Shared/tmp/spec-tmp-files'
       @docker_shared_directory_path = '/tmp/spec-tmp-files'
       @hive_version = 10
