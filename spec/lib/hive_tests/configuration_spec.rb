@@ -65,7 +65,7 @@ describe HiveTests::Configuration do
     let(:expected_host_shared_directory_path) do
       '/Users/Shared/tmp/spec-tmp-files'
     end
-    let(:expected_docker_shared_directory_path) { '/tmp/spec-tmp-file' }
+    let(:expected_docker_shared_directory_path) { '/tmp/spec-tmp-files' }
     let(:expected_hive_version) { 10 }
 
     after { File.unlink(path_to_config_file) }

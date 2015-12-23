@@ -17,8 +17,8 @@ namespace :hive_tests do
             'host' => host,
             'port' => 10000,
             'host_shared_directory_path' =>
-              File.join(Dir.mktmpdir, 'spec-tmp-file'),
-            'docker_shared_directory_path' => '/tmp/spec-tmp-file',
+              File.join(Dir.mktmpdir, 'spec-tmp-files'),
+            'docker_shared_directory_path' => '/tmp/spec-tmp-files',
             'hive_version' => '10'
           }
       }
