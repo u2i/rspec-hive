@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     hive_tests (0.0.1)
-      colorize
+      colorize (~> 0.7)
       rake (~> 10.0)
 
 GEM
@@ -96,7 +96,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.7)
-  codeclimate-test-reporter
+  codeclimate-test-reporter (~> 0.4)
   guard (~> 2.6)
   guard-rspec (~> 4.3)
   guard-rubocop (~> 1.2)

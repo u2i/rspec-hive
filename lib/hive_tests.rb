@@ -25,3 +25,5 @@ module HiveTests
 
   private_class_method :new_configuration
 end
+
+require 'rake_tasgemks/railtie' if defined?(Rails)

@@ -5,7 +5,7 @@ require 'tmpdir'
 namespace :hive_tests do
   namespace :config do
     desc 'Generates example config file. Accepts directory to file.'
-    task :generate_default, [:config_directory, :config_file_name] do |_, args|
+    task :generate_default do
       require 'rbconfig'
 
       host_os = RbConfig::CONFIG['host_os']
@@ -14,17 +14,21 @@ namespace :hive_tests do
       default_values = {
         'hive' =>
           {
-            'host' => host,
-            'port' => 10000,
+            'host' => ENV['HOST'] || host,
+            'port' => ENV['PORT'] || 10000,
             'host_shared_directory_path' =>
-              File.join(Dir.mktmpdir, 'spec-tmp-files'),
-            'docker_shared_directory_path' => '/tmp/spec-tmp-files',
-            'hive_version' => '10'
+              ENV['HOST_SHARED_DIR'] || host_os =~ /darwin|mac os/ ?
+                File.join(Dir.mktmpdir(nil, '/Users/Shared'), 'spec-tmp-files') : File.join(Dir.mktmpdir, 'spec-tmp-files'),
+            'docker_shared_directory_path' =>
+              ENV['DOCKER_SHARED_DIR'] || '/tmp/spec-tmp-files',
+            'hive_version' =>
+              ENV['HIVE_VERSION'] || 10
           }
       }
+      system 'mkdir', '-p', default_values['hive']['host_shared_directory_path']
       file_path = File.join(
-        args[:config_directory],
-        args[:config_file_name] || 'hive_tests_config.yml'
+        ENV['CONFIG_FILE_DIR'] || '.',
+        ENV['CONFIG_FILE_NAME'] || 'hive_tests_config.yml'
       )
       File.open(file_path, 'w+') do |f|
         f.write default_values.to_yaml
@@ -36,12 +40,17 @@ namespace :hive_tests do
   namespace :docker do
     desc 'Runs docker using hive config file.'\
           ' It assumes your docker-machine is running.'
-    task :run, [:config_file, :docker_image_name] do |_, args|
+    task :run do
       puts 'Command `docker` not found.'.red unless system('which docker')
 
-      docker_image_name = args[:docker_image_name] || 'nielsensocial/hive'
+      config_filepath = ENV['CONFIG_FILE'] || 'hive_tests_config.yml'
+      docker_image_name = ENV['DOCKER_IMAGE_NAME'] || 'nielsensocial/hive'
+      unless File.exist? config_filepath
+        puts "There's no config file #{config_filepath} please generate default or provide custom config.".red
+        raise Errno::ENOENT.new config_filepath unless File.exist? config_filepath
+      end
 
-      interpolated = ERB.new(File.read(args[:config_file])).result
+      interpolated = ERB.new(File.read(config_filepath)).result
       config = YAML.load(interpolated)['hive']
 
       cmd = "docker run -v #{config['host_shared_directory_path']}:"\
