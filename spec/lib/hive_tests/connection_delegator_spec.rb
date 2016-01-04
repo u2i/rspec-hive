@@ -17,17 +17,17 @@ describe HiveTests::ConnectionDelegator do
     let(:values) { ['a', 'b', 1] }
 
     before do
-      expect(Tempfile).to receive(:open)
-        .with(table_name, host_shared_directory_path).and_yield(file_mock)
+      expect(Tempfile).to receive(:open).
+        with(table_name, host_shared_directory_path).and_yield(file_mock)
 
-      expect(subject).to receive(:translate_to_docker_path)
-        .with(file_mock) { docker_file_path }
+      expect(subject).to receive(:translate_to_docker_path).
+        with(file_mock) { docker_file_path }
 
-      expect(subject).to receive(:write_values_to_file)
-        .with(file_mock, values).once
+      expect(subject).to receive(:write_values_to_file).
+        with(file_mock, values).once
 
-      expect(subject).to receive(:load_file_to_hive_table)
-        .with(table_name, docker_file_path).once
+      expect(subject).to receive(:load_file_to_hive_table).
+        with(table_name, docker_file_path).once
     end
 
     subject { described_class.new(connection, config) }
@@ -97,8 +97,8 @@ describe HiveTests::ConnectionDelegator do
     subject { described_class.new(connection, config) }
 
     it do
-      expect(subject.send(:translate_to_docker_path, file_mock))
-        .to eq(expected_file_path)
+      expect(subject.send(:translate_to_docker_path, file_mock)).
+        to eq(expected_file_path)
     end
   end
 

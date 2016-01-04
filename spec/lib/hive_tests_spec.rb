@@ -13,7 +13,7 @@ describe HiveTests do
       let(:file_name) { 'test.yaml' }
       let(:configuration_mock) do
         double(
-          HiveTests::Configuration,
+          described_class::Configuration,
           host: expected_host,
           port: expected_port,
           host_shared_directory_path: expected_host_shared_directory_path,
@@ -22,11 +22,11 @@ describe HiveTests do
       end
 
       before do
-        expect(HiveTests).to receive(:new_configuration)
-          .with(file_name) { configuration_mock }
+        expect(described_class).to receive(:new_configuration).
+          with(file_name) { configuration_mock }
       end
 
-      subject { HiveTests.configure(file_name) }
+      subject { described_class.configure(file_name) }
 
       its(:host) { is_expected.to eq(expected_host) }
       its(:port) { is_expected.to eq(expected_port) }
@@ -40,7 +40,7 @@ describe HiveTests do
 
     context 'when block is given' do
       subject do
-        HiveTests.configure do |config|
+        described_class.configure do |config|
           config.host = expected_host
           config.port = expected_port
           config.host_shared_directory_path =
