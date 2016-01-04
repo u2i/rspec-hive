@@ -27,4 +27,3 @@ module HiveTests
 end
 
 require 'rake_tasks/railtie' if defined?(Rails)
-
