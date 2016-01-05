@@ -4,7 +4,9 @@
 
 # HiveTests
 
-HiveTests is a utility gem to help you write beautiful rspec tests for hive queries. The idea is simple - you just launch a docker machine with hadoop and hive installed (on tips how to do it check out our example Dockerfile), then call `HiveTests.configure` with config of host, port and shared directories of this docker machine and finally just extend a spec with `HiveTests::WithHiveConnection`.
+HiveTests is a utility gem to help you write beautiful rspec tests for hive queries. The idea is simple - you just launch a docker machine with hadoop and hive installed. To test a query you create a simple RSpec file and extend it with `HiveTests::WithHiveConnection`.
+
+We have prepared a few simple rake tasks that will let you create sample config file, download correct docker image and run docker container with proper parameters.
 
 ## Installation
 
@@ -21,17 +23,46 @@ And then execute:
 Or install it yourself as:
 
     $ gem install hive_tests
-### Setting up docker
 
-To build docker enter directory with Dockerfile and run
+### Configuring tests
 
-`$ docker build -t <docker-name>`
+#### Config file
 
-Then run docker machine with proper port mapping and setting up shared directory. For more information see - [docker documentation](https://docs.docker.com/engine/userguide/dockervolumes/)
+To run tests on docker you will need a configurtion file that will let you put up a docker container and maintain your connection to this container from tests. You can do this manually and provide just a path to file, but we have also prepared special rake tasks to help you out. Try running:
 
-`$ docker run -v <host_shared_folder>:<docker_shared_folder> -d -p <host_port>:<docker_port> <docker-name> `
+    $ rake hive_tests:config:generate_default
 
-Remember that you have also to set up proper configurtaion so that you can communicate with hive instance on docker.
+It will create `hive_tests_config.yml` in your current directory. You can of course pass some parameters to this rake task doing something like:
+
+    $ rake hive_tests:config:generate_default HOST=127.0.0.1 PORT=5032
+
+You can specify following arguments:
+* HOST - the ip of docker container
+* PORT - port to connect to docker
+* HOST_SHARED_DIR - directory on your local machine that docker will share
+* DOCKER_SHARED_DIR - directory on your docker container that will be shared with your local machine
+* HIVE_VERSION - the version of hive
+* CONFIG_FILE_DIR - directory where to put generated config file
+* CONFIG_FILE_NAME - name of the config file that will be generated
+
+#### Docker image
+Once you have generated a config file you should download to your local machine proper docker image. You can create your own docker image. However if you would like to use ours just run:
+
+    $ rake hive_tests:docker:download_image
+    
+It will download `nielsensocial/hive` from [dockerhub](https://hub.docker.com/r/nielsensocial/hive/).
+If you have another image you can also use this rake task and provide special argument:
+* DOCKER_IMAGE_NAME - image name that should be pulled
+ 
+#### Running docker container
+You should be now ready to go and run your docker container. To do this run:
+    $ rake hive_tests:docker:run
+
+This command will run docker container using default config `hive_tests_config.yml` and default docker image `nielsensocial/hive`. You can pass arguments like:
+* CONFIG_FILE - the name of config file to use
+* DOCKER_IMAGE_NAME - docker image to use
+
+You are ready now to run your tests.
 
 #### Docker utils
 
@@ -49,7 +80,11 @@ To run bash terminal on docker
 
 ## Usage
 
-Check `examples/`
+In `examples/` directory we have prepared a simple query. It is available in `query_spec.rb` file. Notice how we configure `hive_tests` by using:
+    require_relative 'config_helper'
+
+Where we invoke:
+    HiveTests.configure(File.join(__dir__, './../hive_tests_config.yml'))
 
 ## Contributing
 
