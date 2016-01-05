@@ -81,9 +81,11 @@ To run bash terminal on docker
 ## Usage
 
 In `examples/` directory we have prepared a simple query. It is available in `query_spec.rb` file. Notice how we configure `hive_tests` by using:
+    
     require_relative 'config_helper'
 
 Where we invoke:
+    
     HiveTests.configure(File.join(__dir__, './../hive_tests_config.yml'))
 
 ## Contributing
