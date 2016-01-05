@@ -37,11 +37,11 @@ It will create `hive_tests_config.yml` in your current directory. You can of cou
     $ rake hive_tests:config:generate_default HOST=127.0.0.1 PORT=5032
 
 You can specify following arguments:
-* HOST - the ip of docker container
+* HOST - ip of docker container
 * PORT - port to connect to docker
 * HOST_SHARED_DIR - directory on your local machine that docker will share
 * DOCKER_SHARED_DIR - directory on your docker container that will be shared with your local machine
-* HIVE_VERSION - the version of hive
+* HIVE_VERSION - version of hive
 * CONFIG_FILE_DIR - directory where to put generated config file
 * CONFIG_FILE_NAME - name of the config file that will be generated
 
@@ -55,11 +55,12 @@ If you have another image you can also use this rake task and provide special ar
 * DOCKER_IMAGE_NAME - image name that should be pulled
  
 #### Running docker container
-You should be now ready to go and run your docker container. To do this run:
+You should now be ready to run your docker container. To do this run:
+
     $ rake hive_tests:docker:run
 
 This command will run docker container using default config `hive_tests_config.yml` and default docker image `nielsensocial/hive`. You can pass arguments like:
-* CONFIG_FILE - the name of config file to use
+* CONFIG_FILE - name of config file to use
 * DOCKER_IMAGE_NAME - docker image to use
 
 You are ready now to run your tests.
