@@ -62,10 +62,10 @@ namespace :hive_tests do
     end
 
     desc 'Downloads docker image from dockerhub.'
-    task :download_image, [:docker_image_name] do |_, args|
+    task :download_image do
       puts 'Command `docker` not found.'.red unless system('which docker')
 
-      docker_image_name = args[:docker_image_name] || 'nielsensocial/hive'
+      docker_image_name = ENV['DOCKER_IMAGE_NAME'] || 'nielsensocial/hive'
 
       cmd = "docker pull #{docker_image_name}"
       puts "Running `#{cmd}`...".green

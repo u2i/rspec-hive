@@ -14,7 +14,6 @@ module HiveTests
       end
 
       mod.before(:each) do
-        # TODO: connection.drop_database ?
         connection.switch_database(HiveTests::DbName.random_name)
       end
 
