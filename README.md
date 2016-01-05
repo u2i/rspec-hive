@@ -79,6 +79,16 @@ To run bash terminal on docker
 
 `$ docker exec -it <docker-container-id> bash`
 
+#### Hive utils
+
+When you are on hive and you have set up `JAVA_HOME` and `HADOOP_HOME` directories you might find usefull the tool named beeline. It should be present in your hive directory in `bin` folder (if you are using ours `nielsensocial/hive` when you run bash terminal on docker container this directory could be entered by calling `cd $HIVE_HOME/bin`). There you can run:
+
+    $ ./beeline
+
+And in the presented console connect by jdbc to hive:
+
+    beeline> !connect jdbc:hive2://localhost:10000 org.apache.hive.jdbc.HiveDriver
+
 ## Usage
 
 In `examples/` directory we have prepared a simple query. It is available in `query_spec.rb` file. Notice how we configure `hive_tests` by using:
