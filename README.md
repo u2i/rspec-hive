@@ -45,6 +45,12 @@ You can specify following arguments:
 * CONFIG_FILE_DIR - directory where to put generated config file
 * CONFIG_FILE_NAME - name of the config file that will be generated
 
+#### Installing Docker
+Detailed instruction may be found on https://docs.docker.com/engine/installation.
+
+Once docker is sucessfully installed on your machine you can verify if it works by using `docker` command.
+In case of error such as `Cannot connect to the Docker daemon. Is the docker daemon running on this host?` make sure you added your user to the docker group, you can do this using `sudo usermod -aG docker username` on Linux or `eval "$(docker-machine env default)"` on OSX.
+
 #### Docker image
 Once you have generated a config file you should download to your local machine proper docker image. You can create your own docker image. However if you would like to use ours just run:
 
