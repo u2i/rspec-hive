@@ -104,6 +104,10 @@ In `examples/` directory we have prepared a simple query. It is available in `qu
 Where we invoke:
     
     HiveTests.configure(File.join(__dir__, './../hive_tests_config.yml'))
+    
+## Note
+
+Please remember docker does not remove containers automatically, use `docker ps -a` to list all unused containers.
 
 ## Contributing
 
