@@ -14,6 +14,16 @@ module HiveTests
     def start_connection(db_name = HiveTests::DbName.random_name)
       connection = open_connection
       connection.switch_database(db_name)
+      config = [
+        'SET hive.exec.dynamic.partition = true;',
+        'SET hive.exec.dynamic.partition.mode = nonstrict;',
+        'SET hive.exec.max.dynamic.partitions.pernodexi=100000;',
+        'SET hive.exec.max.dynamic.partitions=100000;'
+      ]
+      config.each do |c|
+        connection.execute(c)
+      end
+
       connection
 
     rescue Thrift::ApplicationException => _
