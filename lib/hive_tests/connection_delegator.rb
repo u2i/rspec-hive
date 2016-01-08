@@ -8,10 +8,11 @@ module HiveTests
       @config = config
     end
 
-    def load_into_table(table_name, values)
+    def load_into_table(table_name, values, partitions = nil)
       Tempfile.open(table_name, @config.host_shared_directory_path) do |file|
         write_values_to_file(file, values)
-        load_file_to_hive_table(table_name, translate_to_docker_path(file))
+        partition_clause = partition_clause(partitions) if partitions
+        load_file_to_hive_table(table_name, translate_to_docker_path(file), partition_clause)
       end
     end
 
@@ -42,8 +43,12 @@ module HiveTests
 
     private
 
-    def load_file_to_hive_table(table_name, path)
-      execute("load data local inpath '#{path}' into table #{table_name}")
+    def partition_clause(partitions)
+      "PARTITION(#{partitions.map { |k, v| "#{k}='#{v}'" }.join(',')})"
+    end
+
+    def load_file_to_hive_table(table_name, path, partition_clause = '')
+      execute("load data local inpath '#{path}' into table #{table_name} #{partition_clause}")
     end
 
     def translate_to_docker_path(file)
