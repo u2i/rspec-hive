@@ -20,20 +20,55 @@ describe HiveTests::ConnectionDelegator do
       expect(Tempfile).to receive(:open).
         with(table_name, host_shared_directory_path).and_yield(file_mock)
 
-      expect(subject).to receive(:translate_to_docker_path).
+      expect(subject).to receive(:docker_path).
         with(file_mock) { docker_file_path }
 
       expect(subject).to receive(:write_values_to_file).
         with(file_mock, values).once
-
-      expect(subject).to receive(:load_file_to_hive_table).
-        with(table_name, docker_file_path).once
     end
+
+    context 'without partitions' do
+      before do
+        expect(subject).to receive(:load_file_to_hive_table).
+          with(table_name, docker_file_path, nil).once
+
+        expect(subject).not_to receive(:partition_clause)
+      end
+
+      subject { described_class.new(connection, config) }
+
+      it do
+        subject.load_into_table(table_name, values)
+      end
+    end
+
+    context 'with partitions' do
+      let(:partitions) { {day: '20160101', hm: '2020'} }
+      let(:partition_query) { "PARTITION(day='20160101',hm='2020')" }
+      before do
+        expect(subject).to receive(:load_file_to_hive_table).
+          with(table_name, docker_file_path, partition_query).once
+        expect(subject).to receive(:partition_clause).with(partitions) { partition_query }
+      end
+
+      subject { described_class.new(connection, config) }
+
+      it do
+        subject.load_into_table(table_name, values, partitions)
+      end
+    end
+  end
+
+  describe '#partition_clause' do
+    let(:config) { double('Config') }
+    let(:connection) { double('Connection') }
+    let(:partitions) { {day: '20160101', hm: '2020'} }
+    let(:partition_query) { "PARTITION(day='20160101',hm='2020')" }
 
     subject { described_class.new(connection, config) }
 
-    it do
-      subject.load_into_table(table_name, values)
+    it 'translates partition hash to correct query' do
+      expect(subject.send(:partition_clause, partitions)).to eq(partition_query)
     end
   end
 
@@ -97,7 +132,7 @@ describe HiveTests::ConnectionDelegator do
     subject { described_class.new(connection, config) }
 
     it do
-      expect(subject.send(:translate_to_docker_path, file_mock)).
+      expect(subject.send(:docker_path, file_mock)).
         to eq(expected_file_path)
     end
   end
