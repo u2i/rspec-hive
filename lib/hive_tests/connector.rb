@@ -26,7 +26,9 @@ module HiveTests
 
       connection
 
-    rescue Thrift::ApplicationException => _
+    rescue Thrift::ApplicationException => e
+      config.logger.fatal('An exception was thrown during start connection')
+      config.logger.fatal(e)
       stop_connection(connection)
       connection
     end
