@@ -8,6 +8,16 @@ module HiveTests
       @config = config
     end
 
+    def create_table(table_schema)
+      execute(table_schema.instance_variable_set(:@location, nil))
+    end
+
+    def load_partitions(table_name, partitions)
+      partitions = partition_clause(partitions)
+      query = "ALTER TABLE #{table_name} ADD #{partitions}"
+      execute(query)
+    end
+
     def load_into_table(table_name, values, partitions = nil)
       Tempfile.open(table_name, @config.host_shared_directory_path) do |file|
         write_values_to_file(file, values)
@@ -44,7 +54,15 @@ module HiveTests
     private
 
     def partition_clause(partitions)
-      "PARTITION(#{partitions.map { |k, v| "#{k}='#{v}'" }.join(',')})"
+      if partitions.is_a?(Array)
+        partitions.collect { |x| to_partition_clause(x) }.join(' ')
+      else
+        to_partition_clause(partitions)
+      end
+    end
+
+    def to_partition_clause(partition)
+      "PARTITION(#{partition.map { |k, v| "#{k}='#{v}'" }.join(',')})"
     end
 
     def load_file_to_hive_table(table_name, path, partition_clause = '')

@@ -48,7 +48,8 @@ describe HiveTests::ConnectionDelegator do
       before do
         expect(subject).to receive(:load_file_to_hive_table).
           with(table_name, docker_file_path, partition_query).once
-        expect(subject).to receive(:partition_clause).with(partitions) { partition_query }
+        expect(subject).to receive(:partition_clause).
+          with(partitions) { partition_query }
       end
 
       subject { described_class.new(connection, config) }
@@ -59,16 +60,61 @@ describe HiveTests::ConnectionDelegator do
     end
   end
 
-  describe '#partition_clause' do
+  describe '#load_partition' do
     let(:config) { double('Config') }
     let(:connection) { double('Connection') }
-    let(:partitions) { {day: '20160101', hm: '2020'} }
-    let(:partition_query) { "PARTITION(day='20160101',hm='2020')" }
+
+    let(:table_name) { 'test_table' }
+    let(:partitions) do
+      [{dth: 'mon', country: 'us'}, {dth: 'tue', country: 'us'}]
+    end
+    let(:partition_query) do
+      "PARTITION(dth='mon',country='us') PARTITION(dth='tue',country='us')"
+    end
+
+    let(:executed_query) do
+      "ALTER TABLE test_table ADD PARTITION(dth='mon',country='us') PARTITION(dth='tue',country='us')"
+    end
+
+    before do
+      expect(subject).to receive(:partition_clause).
+        with(partitions) { partition_query }
+      expect(connection).to receive(:execute).with(executed_query)
+    end
 
     subject { described_class.new(connection, config) }
 
-    it 'translates partition hash to correct query' do
-      expect(subject.send(:partition_clause, partitions)).to eq(partition_query)
+    it do
+      subject.load_partitions(table_name, partitions)
+    end
+  end
+
+  describe '#partition_clause' do
+    let(:config) { double('Config') }
+    let(:connection) { double('Connection') }
+
+    context 'with single partition' do
+      let(:partitions) { {day: '20160101', hm: '2020'} }
+      let(:partition_query) { "PARTITION(day='20160101',hm='2020')" }
+
+      subject { described_class.new(connection, config) }
+
+      it 'translates partition hash to single query' do
+        expect(subject.send(:partition_clause, partitions)).to eq(partition_query)
+      end
+    end
+
+    context 'with multiple partitions' do
+      let(:partitions) { [{day: 'mon', hm: '2020'}, {day: 'tue', hm: '2020'}, {day: 'mon', hm: '2030'}] }
+      let(:partition_query) do
+        "PARTITION(day='mon',hm='2020') PARTITION(day='tue',hm='2020') PARTITION(day='mon',hm='2030')"
+      end
+
+      subject { described_class.new(connection, config) }
+
+      it 'translates partition hash to combined query' do
+        expect(subject.send(:partition_clause, partitions)).to eq(partition_query)
+      end
     end
   end
 
