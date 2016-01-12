@@ -69,7 +69,8 @@ module HiveTests
         hive_version: @config.hive_version,
         transport: :sasl,
         sasl_params: {},
-        logger: @config.logger
+        logger: @config.logger,
+        timeout: @config.connection_timeout
       }
     end
   end
