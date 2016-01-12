@@ -9,7 +9,9 @@ module HiveTests
     end
 
     def create_table(table_schema)
-      execute(table_schema.instance_variable_set(:@location, nil))
+      table_schema = table_schema.dup
+      table_schema.instance_variable_set(:@location, nil)
+      execute(table_schema)
     end
 
     def load_partitions(table_name, partitions)

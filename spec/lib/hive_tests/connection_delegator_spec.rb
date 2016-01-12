@@ -216,6 +216,24 @@ describe HiveTests::ConnectionDelegator do
     end
   end
 
+  describe '#create_table' do
+    let(:connection) { double('Connection') }
+    let(:config) { double('Config') }
+    let(:table_schema) { double('Table_schema') }
+
+    before do
+      expect(table_schema).to receive(:dup) { table_schema }
+      expect(table_schema).to receive(:instance_variable_set).with(:@location, nil)
+      expect(connection).to receive(:execute).with(table_schema)
+    end
+
+    subject { described_class.new(connection, config) }
+
+    it do
+      subject.create_table(table_schema)
+    end
+  end
+
   describe '#use databaes' do
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
