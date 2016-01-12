@@ -220,11 +220,13 @@ describe HiveTests::ConnectionDelegator do
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
     let(:table_schema) { double('Table_schema') }
+    let(:table_statement) { 'I AM TABLE STATEMENT' }
 
     before do
       expect(table_schema).to receive(:dup) { table_schema }
       expect(table_schema).to receive(:instance_variable_set).with(:@location, nil)
-      expect(connection).to receive(:execute).with(table_schema)
+      expect(table_schema).to receive(:create_table_statement) { table_statement }
+      expect(connection).to receive(:execute).with(table_statement)
     end
 
     subject { described_class.new(connection, config) }
