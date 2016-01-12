@@ -37,8 +37,8 @@ module HiveTests
       @port = config['port']
       @host_shared_directory_path = config['host_shared_directory_path']
       @docker_shared_directory_path = config['docker_shared_directory_path']
-      @hive_version = config['hive_version'].to_i || 10
-      @connection_timeout = config['timeout'].to_i || 1800
+      @hive_version = (config['hive_version'] || 10).to_i
+      @connection_timeout = (config['timeout'] || 1800).to_i
     end
   end
 end
