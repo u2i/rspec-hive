@@ -51,7 +51,15 @@ module HiveTests
 
     private
 
+    def log_connection_params
+      @config.logger.info('Opening connection.')
+      @config.logger.info("Connection options: #{connection_options}")
+      @config.logger.info("Config #{@config}")
+    end
+
     def open_connection
+      log_connection_params
+
       connection = RBHive::TCLIConnection.new(
         @config.host,
         @config.port,

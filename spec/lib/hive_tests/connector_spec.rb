@@ -33,6 +33,7 @@ describe HiveTests::Connector do
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode = nonstrict;')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000;')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions=100000;')
+        allow(configuration).to receive_message_chain(:logger, :info)
       end
 
       subject { described_class.new(configuration) }
@@ -61,6 +62,7 @@ describe HiveTests::Connector do
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode = nonstrict;')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000;')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions=100000;')
+        allow(configuration).to receive_message_chain(:logger, :info)
       end
 
       subject { described_class.new(configuration) }
