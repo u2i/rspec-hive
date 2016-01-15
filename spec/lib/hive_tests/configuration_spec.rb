@@ -26,6 +26,10 @@ describe HiveTests::Configuration do
     its(:connection_timeout) do
       is_expected.to eq(expected_timeout)
     end
+
+    its(:hive_options) do
+      is_expected.to eq(expected_hive_options)
+    end
   end
 
   let(:expected_host_shared_directory_path) do
@@ -34,6 +38,18 @@ describe HiveTests::Configuration do
   let(:expected_docker_shared_directory_path) { '/tmp/spec-tmp-files' }
   let(:expected_hive_version) { 10 }
   let(:expected_timeout) { 1800 }
+  let(:expected_partition_flag) { 'true' }
+  let(:expected_partition_mode) { 'nonstrict' }
+  let(:expected_partiton_pernodexi) { '100000' }
+  let(:expected_partitions) { '100000' }
+  let(:expected_java_opts) { '-Xmx2048m' }
+  let(:expected_hive_options) do
+    {'hive.exec.dynamic.partition' => expected_partition_flag,
+     'hive.exec.dynamic.partition.mode' => expected_partition_mode,
+     'hive.exec.max.dynamic.partitions.pernodexi' => expected_partiton_pernodexi,
+     'hive.exec.max.dynamic.partitions' => expected_partitions,
+     'mapred.child.java.opts' => expected_java_opts}
+  end
 
   context 'when no configuration file is provided' do
     let(:expected_host) { '192.168.99.100' }
@@ -92,6 +108,32 @@ describe HiveTests::Configuration do
         }
       end
       let(:expected_hive_version) { 10 }
+
+      after { File.unlink(path_to_config_file) }
+
+      subject { described_class.new(path_to_config_file) }
+
+      include_examples('config')
+    end
+
+    context 'where there are some parametres required and optional' do
+      let(:yaml_hash) do
+        {
+          'hive' =>
+            {
+              'host' => '127.0.0.2',
+              'port' => 10001,
+              'host_shared_directory_path' => expected_host_shared_directory_path,
+              'docker_shared_directory_path' => expected_docker_shared_directory_path,
+              'hive_version' => 11,
+              'hive_options' => {
+                'mapred.child.java.opts' => '-Xmx64m'
+              }
+            }
+        }
+      end
+      let(:expected_hive_version) { 11 }
+      let(:expected_java_opts) { '-Xmx64m' }
 
       after { File.unlink(path_to_config_file) }
 

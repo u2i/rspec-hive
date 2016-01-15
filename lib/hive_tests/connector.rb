@@ -14,14 +14,8 @@ module HiveTests
     def start_connection(db_name = HiveTests::DbName.random_name)
       connection = open_connection
       connection.switch_database(db_name)
-      config = [
-        'SET hive.exec.dynamic.partition = true;',
-        'SET hive.exec.dynamic.partition.mode = nonstrict;',
-        'SET hive.exec.max.dynamic.partitions.pernodexi=100000;',
-        'SET hive.exec.max.dynamic.partitions=100000;'
-      ]
-      config.each do |c|
-        connection.execute(c)
+      @config.hive_options.each do |key, value|
+        connection.execute("SET #{key}=#{value};")
       end
 
       connection

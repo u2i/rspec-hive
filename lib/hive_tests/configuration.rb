@@ -8,7 +8,8 @@ module HiveTests
                   :docker_shared_directory_path,
                   :logger,
                   :hive_version,
-                  :connection_timeout
+                  :connection_timeout,
+                  :hive_options
 
     def initialize(path_to_config_file = nil)
       if path_to_config_file.nil?
@@ -28,8 +29,9 @@ module HiveTests
       @port = 10000
       @host_shared_directory_path = '/Users/Shared/tmp/spec-tmp-files'
       @docker_shared_directory_path = '/tmp/spec-tmp-files'
-      @hive_version = 10
-      @connection_timeout = 1800
+      @hive_version = default_version
+      @connection_timeout = default_timeout
+      @hive_options = default_hive_options
     end
 
     def load_variables_from_config(config)
@@ -37,8 +39,29 @@ module HiveTests
       @port = config['port']
       @host_shared_directory_path = config['host_shared_directory_path']
       @docker_shared_directory_path = config['docker_shared_directory_path']
-      @hive_version = (config['hive_version'] || 10).to_i
-      @connection_timeout = (config['timeout'] || 1800).to_i
+      @hive_version = (config['hive_version'] || default_version).to_i
+      @connection_timeout = (config['timeout'] || default_timeout).to_i
+      @hive_options = merge_config_options(default_hive_options, config)
+    end
+
+    def merge_config_options(hash, config)
+      hash.merge(config['hive_options'].to_h)
+    end
+
+    def default_timeout
+      1800
+    end
+
+    def default_version
+      10
+    end
+
+    def default_hive_options
+      {'hive.exec.dynamic.partition' => 'true',
+       'hive.exec.dynamic.partition.mode' => 'nonstrict',
+       'hive.exec.max.dynamic.partitions.pernodexi' => '100000',
+       'hive.exec.max.dynamic.partitions' => '100000',
+       'mapred.child.java.opts' => '-Xmx2048m'}
     end
   end
 end
