@@ -1,6 +1,7 @@
 require 'yaml'
 require 'colorize'
 require 'tmpdir'
+require 'hive_tests'
 
 namespace :hive_tests do
   namespace :config do
@@ -8,21 +9,19 @@ namespace :hive_tests do
     task :generate_default do
       require 'rbconfig'
 
-      host_os = RbConfig::CONFIG['host_os']
-      host = host_os =~ /darwin|mac os/ ? '192.168.99.100' : '127.0.0.1'
+      default_config = HiveTests::Configuration.new
 
       default_values = {
         'hive' =>
           {
-            'host' => ENV['HOST'] || host,
-            'port' => ENV['PORT'] || 10000,
+            'host' => ENV['HOST'] || default_config.host,
+            'port' => ENV['PORT'] || default_config.port,
             'host_shared_directory_path' =>
-              ENV['HOST_SHARED_DIR'] || host_os =~ /darwin|mac os/ ?
-                File.join(Dir.mktmpdir(nil, '/Users/Shared'), 'spec-tmp-files') : File.join(Dir.mktmpdir, 'spec-tmp-files'),
+              ENV['HOST_SHARED_DIR'] || default_config.host_shared_directory_path,
             'docker_shared_directory_path' =>
-              ENV['DOCKER_SHARED_DIR'] || '/tmp/spec-tmp-files',
+              ENV['DOCKER_SHARED_DIR'] || default_config.docker_shared_directory_path,
             'hive_version' =>
-              ENV['HIVE_VERSION'] || 10
+              ENV['HIVE_VERSION'] || default_config.hive_version
           }
       }
       system 'mkdir', '-p', default_values['hive']['host_shared_directory_path']

@@ -48,7 +48,7 @@ module HiveTests
     def log_connection_params
       @config.logger.info('Opening connection.')
       @config.logger.info("Connection options: #{connection_options}")
-      @config.logger.info("Config #{@config}")
+      @config.logger.info("Config #{@config.inspect}")
     end
 
     def open_connection

@@ -25,9 +25,9 @@ module HiveTests
     private
 
     def load_default_variables
-      @host = '192.168.99.100'
+      @host = platform_specific_host
       @port = 10000
-      @host_shared_directory_path = '/Users/Shared/tmp/spec-tmp-files'
+      @host_shared_directory_path = platform_specific_host_shared_dir_path
       @docker_shared_directory_path = '/tmp/spec-tmp-files'
       @hive_version = default_version
       @connection_timeout = default_timeout
@@ -46,6 +46,20 @@ module HiveTests
 
     def merge_config_options(hash, config)
       hash.merge(config['hive_options'].to_h)
+    end
+
+    def platform_specific_host
+      host_os = RbConfig::CONFIG['host_os']
+      host_os =~ /darwin|mac os/ ? '192.168.99.100' : '127.0.0.1'
+    end
+
+    def platform_specific_host_shared_dir_path
+      host_os = RbConfig::CONFIG['host_os']
+      if host_os =~ /darwin|mac os/
+        File.join(Dir.mktmpdir(nil, '/Users/Shared'), 'spec-tmp-files')
+      else
+        File.join(Dir.mktmpdir, 'spec-tmp-files')
+      end
     end
 
     def default_timeout

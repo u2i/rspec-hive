@@ -67,9 +67,9 @@ module HiveTests
       "PARTITION(#{partition.map { |k, v| "#{k}='#{v}'" }.join(',')})"
     end
 
-    def load_file_to_hive_table(table_name, path, partition_clause = '')
+    def load_file_to_hive_table(table_name, path, partition_clause = nil)
       request_txt = "load data local inpath '#{path}' into table #{table_name}"
-      request_txt << " #{partition_clause}" unless partition_clause.empty?
+      request_txt << " #{partition_clause}" unless partition_clause.nil?
       execute(request_txt)
     end
 

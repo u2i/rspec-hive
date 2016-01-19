@@ -12,7 +12,7 @@ describe HiveTests::Configuration do
     end
 
     its(:host_shared_directory_path) do
-      is_expected.to eq(expected_host_shared_directory_path)
+      is_expected.to match(expected_host_shared_directory_path)
     end
 
     its(:docker_shared_directory_path) do
@@ -55,6 +55,9 @@ describe HiveTests::Configuration do
     let(:expected_host) { '192.168.99.100' }
     let(:expected_port) { 10000 }
     let(:mock_tmpdir) { '/tmp' }
+    let(:expected_host_shared_directory_path) do
+      %r{/Users/Shared/.*/spec-tmp-files}
+    end
 
     before { allow(Dir).to receive(:tmpdir).and_return(mock_tmpdir) }
 
@@ -126,12 +129,14 @@ describe HiveTests::Configuration do
               'host_shared_directory_path' => expected_host_shared_directory_path,
               'docker_shared_directory_path' => expected_docker_shared_directory_path,
               'hive_version' => 11,
+              'timeout' => 60,
               'hive_options' => {
                 'mapred.child.java.opts' => '-Xmx64m'
               }
             }
         }
       end
+      let(:expected_timeout) { 60 }
       let(:expected_hive_version) { 11 }
       let(:expected_java_opts) { '-Xmx64m' }
 
