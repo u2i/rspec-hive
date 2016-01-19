@@ -8,10 +8,23 @@ module HiveTests
       @config = config
     end
 
-    def load_into_table(table_name, values)
+    def create_table(table_schema)
+      table_schema = table_schema.dup
+      table_schema.instance_variable_set(:@location, nil)
+      execute(table_schema.create_table_statement)
+    end
+
+    def load_partitions(table_name, partitions)
+      partitions = partition_clause(partitions)
+      query = "ALTER TABLE #{table_name} ADD #{partitions}"
+      execute(query)
+    end
+
+    def load_into_table(table_name, values, partitions = nil)
       Tempfile.open(table_name, @config.host_shared_directory_path) do |file|
         write_values_to_file(file, values)
-        load_file_to_hive_table(table_name, translate_to_docker_path(file))
+        partition_query = partition_clause(partitions) if partitions
+        load_file_to_hive_table(table_name, docker_path(file), partition_query)
       end
     end
 
@@ -42,11 +55,25 @@ module HiveTests
 
     private
 
-    def load_file_to_hive_table(table_name, path)
-      execute("load data local inpath '#{path}' into table #{table_name}")
+    def partition_clause(partitions)
+      if partitions.is_a?(Array)
+        partitions.collect { |x| to_partition_clause(x) }.join(' ')
+      else
+        to_partition_clause(partitions)
+      end
     end
 
-    def translate_to_docker_path(file)
+    def to_partition_clause(partition)
+      "PARTITION(#{partition.map { |k, v| "#{k}='#{v}'" }.join(',')})"
+    end
+
+    def load_file_to_hive_table(table_name, path, partition_clause = nil)
+      request_txt = "load data local inpath '#{path}' into table #{table_name}"
+      request_txt << " #{partition_clause}" unless partition_clause.nil?
+      execute(request_txt)
+    end
+
+    def docker_path(file)
       File.join(@config.docker_shared_directory_path, File.basename(file.path))
     end
 

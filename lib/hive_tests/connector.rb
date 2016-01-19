@@ -1,6 +1,7 @@
 require 'rbhive'
 require 'tempfile'
 require 'yaml'
+require 'pry'
 
 module HiveTests
   class Connector
@@ -14,9 +15,15 @@ module HiveTests
     def start_connection(db_name = HiveTests::DbName.random_name)
       connection = open_connection
       connection.switch_database(db_name)
+      @config.hive_options.each do |key, value|
+        connection.execute("SET #{key}=#{value};")
+      end
+
       connection
 
-    rescue Thrift::ApplicationException => _
+    rescue Thrift::ApplicationException => e
+      config.logger.fatal('An exception was thrown during start connection')
+      config.logger.fatal(e)
       stop_connection(connection)
       connection
     end
@@ -39,7 +46,15 @@ module HiveTests
 
     private
 
+    def log_connection_params
+      @config.logger.info('Opening connection.')
+      @config.logger.info("Connection options: #{connection_options}")
+      @config.logger.info("Config #{@config.inspect}")
+    end
+
     def open_connection
+      log_connection_params
+
       connection = RBHive::TCLIConnection.new(
         @config.host,
         @config.port,
@@ -57,7 +72,8 @@ module HiveTests
         hive_version: @config.hive_version,
         transport: :sasl,
         sasl_params: {},
-        logger: @config.logger
+        logger: @config.logger,
+        timeout: @config.connection_timeout
       }
     end
   end
