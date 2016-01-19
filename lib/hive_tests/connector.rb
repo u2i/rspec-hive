@@ -1,6 +1,7 @@
 require 'rbhive'
 require 'tempfile'
 require 'yaml'
+require 'pry'
 
 module HiveTests
   class Connector
