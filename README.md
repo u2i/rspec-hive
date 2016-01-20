@@ -57,8 +57,10 @@ Once you have generated a config file you should download to your local machine 
     $ rake hive_tests:docker:download_image
     
 It will download `nielsensocial/hive` from [dockerhub](https://hub.docker.com/r/nielsensocial/hive/).
+You can change Docker's storage base directory (where container and images go) using the -goption when starting the Docker daemon.
 If you have another image you can also use this rake task and provide special argument:
 * DOCKER_IMAGE_NAME - image name that should be pulled
+
  
 #### Running docker container
 You should now be ready to run your docker container. To do this run:
