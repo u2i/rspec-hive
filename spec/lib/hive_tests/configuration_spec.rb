@@ -52,18 +52,38 @@ describe HiveTests::Configuration do
   end
 
   context 'when no configuration file is provided' do
-    let(:expected_host) { '192.168.99.100' }
     let(:expected_port) { 10000 }
     let(:mock_tmpdir) { '/tmp' }
-    let(:expected_host_shared_directory_path) do
-      %r{/Users/Shared/.*/spec-tmp-files}
-    end
 
     before { allow(Dir).to receive(:tmpdir).and_return(mock_tmpdir) }
 
     subject { described_class.new }
 
-    include_examples('config')
+    context 'when on Mac' do
+      let(:expected_host) { '192.168.99.100' }
+      let(:expected_host_shared_directory_path) do
+        %r{/Users/Shared/.*/spec-tmp-files}
+      end
+
+      before do
+        allow_any_instance_of(described_class).to receive(:mac?) { true }
+      end
+
+      include_examples('config')
+    end
+
+    context 'when on Linux' do
+      let(:expected_host) { '127.0.0.1' }
+      let(:expected_host_shared_directory_path) do
+        %r{/tmp/.*/spec-tmp-files}
+      end
+
+      before do
+        allow_any_instance_of(described_class).to receive(:mac?) { false }
+      end
+
+      include_examples('config')
+    end
   end
 
   context 'when there is a configuration file' do
