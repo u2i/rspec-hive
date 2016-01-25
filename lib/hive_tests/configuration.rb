@@ -48,14 +48,17 @@ module HiveTests
       hash.merge(config['hive_options'].to_h)
     end
 
-    def platform_specific_host
+    def mac?
       host_os = RbConfig::CONFIG['host_os']
-      host_os =~ /darwin|mac os/ ? '192.168.99.100' : '127.0.0.1'
+      host_os =~ /darwin|mac os/
+    end
+
+    def platform_specific_host
+      mac? ? '192.168.99.100' : '127.0.0.1'
     end
 
     def platform_specific_host_shared_dir_path
-      host_os = RbConfig::CONFIG['host_os']
-      if host_os =~ /darwin|mac os/
+      if mac?
         File.join(Dir.mktmpdir(nil, '/Users/Shared'), 'spec-tmp-files')
       else
         File.join(Dir.mktmpdir, 'spec-tmp-files')
