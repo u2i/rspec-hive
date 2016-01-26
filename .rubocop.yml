@@ -9,3 +9,7 @@ Metrics/LineLength:
   Enabled: true
   Exclude:
     - spec/**/*
+
+Rails/Output:
+  Exclude:
+    - lib/rake_tasks/**

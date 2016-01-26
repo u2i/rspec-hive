@@ -25,6 +25,7 @@ end
 RSpec.configure do |config|
   require 'hive_tests'
   require 'rspec/its'
+  require_relative '../lib/rake_tasks/rake_includer'
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
