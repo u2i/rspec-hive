@@ -61,9 +61,7 @@ describe HiveTests::Configuration do
     context 'when on Mac' do
       let(:mock_tmpdir) { '/Users/Shared/test/' }
       let(:expected_host) { '192.168.99.100' }
-      let(:expected_host_shared_directory_path) do
-        %r{/Users/Shared/.*/spec-tmp-files}
-      end
+      let(:expected_host_shared_directory_path) { '/Users/Shared/test/spec-tmp-files' }
 
       before do
         allow_any_instance_of(described_class).to receive(:mac?) { true }
@@ -75,9 +73,7 @@ describe HiveTests::Configuration do
     context 'when on Linux' do
       let(:mock_tmpdir) { '/tmp/test/' }
       let(:expected_host) { '127.0.0.1' }
-      let(:expected_host_shared_directory_path) do
-        %r{/tmp/.*/spec-tmp-files}
-      end
+      let(:expected_host_shared_directory_path) { '/tmp/test/spec-tmp-files' }
 
       before do
         allow_any_instance_of(described_class).to receive(:mac?) { false }
