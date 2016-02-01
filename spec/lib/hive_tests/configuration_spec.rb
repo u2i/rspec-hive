@@ -53,13 +53,13 @@ describe HiveTests::Configuration do
 
   context 'when no configuration file is provided' do
     let(:expected_port) { 10000 }
-    let(:mock_tmpdir) { '/tmp' }
 
-    before { allow(Dir).to receive(:tmpdir).and_return(mock_tmpdir) }
+    before { allow(Dir).to receive(:mktmpdir) { mock_tmpdir } }
 
     subject { described_class.new }
 
     context 'when on Mac' do
+      let(:mock_tmpdir) { '/Users/Shared/test/' }
       let(:expected_host) { '192.168.99.100' }
       let(:expected_host_shared_directory_path) do
         %r{/Users/Shared/.*/spec-tmp-files}
@@ -73,6 +73,7 @@ describe HiveTests::Configuration do
     end
 
     context 'when on Linux' do
+      let(:mock_tmpdir) { '/tmp/test/' }
       let(:expected_host) { '127.0.0.1' }
       let(:expected_host_shared_directory_path) do
         %r{/tmp/.*/spec-tmp-files}
