@@ -51,6 +51,9 @@ Detailed instruction may be found on https://docs.docker.com/engine/installation
 Once docker is sucessfully installed on your machine you can verify if it works by using `docker` command.
 In case of error such as `Cannot connect to the Docker daemon. Is the docker daemon running on this host?` make sure you added your user to the docker group, you can do this using `sudo usermod -aG docker username` on Linux or `eval "$(docker-machine env default)"` on OSX.
 
+On Linux you can run the docker daemon by using:
+`sudo docker daemon -D -g /mnt`
+
 #### Docker image
 Once you have generated a config file you should download to your local machine proper docker image. You can create your own docker image. However if you would like to use ours just run:
 
