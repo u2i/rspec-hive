@@ -20,9 +20,10 @@ module HiveTests
       execute(query)
     end
 
-    def load_into_table(table_name, values, partitions = nil)
+    def load_into_table(table_schema, values, partitions = nil)
+      table_name = table_schema.name
       Tempfile.open(table_name, @config.host_shared_directory_path) do |file|
-        write_values_to_file(file, values)
+        write_values_to_file(file, values, table_schema.instance_variable_get(:@field_sep))
         partition_query = partition_clause(partitions) if partitions
         load_file_to_hive_table(table_name, docker_path(file), partition_query)
       end
@@ -77,8 +78,8 @@ module HiveTests
       File.join(@config.docker_shared_directory_path, File.basename(file.path))
     end
 
-    def write_values_to_file(file, values)
-      values.each { |value| file.puts(value.join(';')) }
+    def write_values_to_file(file, values, delimiter=';')
+      values.each { |value| file.puts(value.join(delimiter)) }
       file.flush
     end
   end

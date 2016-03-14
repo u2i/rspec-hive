@@ -10,13 +10,17 @@ describe HiveTests::ConnectionDelegator do
         host_shared_directory_path: host_shared_directory_path
       )
     end
+    let(:delimiter) { "\t" }
+    let(:table_name) { 'test_table' }
+    let(:table_schema) { instance_double(RBHive::TableSchema, name: table_name) }
     let(:connection) { double('Connection') }
     let(:file_mock) { double(Tempfile) }
 
-    let(:table_name) { 'test_table' }
     let(:values) { ['a', 'b', 1] }
 
     before do
+      table_schema.instance_variable_set(:@field_sep, delimiter)
+
       expect(Tempfile).to receive(:open).
         with(table_name, host_shared_directory_path).and_yield(file_mock)
 
@@ -24,7 +28,7 @@ describe HiveTests::ConnectionDelegator do
         with(file_mock) { docker_file_path }
 
       expect(subject).to receive(:write_values_to_file).
-        with(file_mock, values).once
+        with(file_mock, values, "\t").once
     end
 
     context 'without partitions' do
@@ -38,7 +42,7 @@ describe HiveTests::ConnectionDelegator do
       subject { described_class.new(connection, config) }
 
       it do
-        subject.load_into_table(table_name, values)
+        subject.load_into_table(table_schema, values)
       end
     end
 
@@ -55,7 +59,7 @@ describe HiveTests::ConnectionDelegator do
       subject { described_class.new(connection, config) }
 
       it do
-        subject.load_into_table(table_name, values, partitions)
+        subject.load_into_table(table_schema, values, partitions)
       end
     end
   end
@@ -126,11 +130,12 @@ describe HiveTests::ConnectionDelegator do
     end
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
-    let(:expected_file_content) { "a;b;1\naa;bb;22\n" }
+    let(:delimiter) { '|' }
+    let(:expected_file_content) { "a|b|1\naa|bb|22\n" }
 
     subject { described_class.new(connection, config) }
     it 'writes values to file in correct format' do
-      subject.send(:write_values_to_file, file, values)
+      subject.send(:write_values_to_file, file, values, delimiter)
       file.rewind
       expect(file.read).to eq(expected_file_content)
     end
