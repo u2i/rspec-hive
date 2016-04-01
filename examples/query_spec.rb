@@ -17,7 +17,7 @@ describe Query do
 
     before do
       connection.execute(subject.table_schema.create_table_statement)
-      connection.load_into_table(subject.table_name, input_data)
+      connection.load_into_table(subject.table_schema, input_data)
     end
 
     it 'query returns one row' do
