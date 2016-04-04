@@ -1,8 +1,11 @@
 inherit_from: .rubocop_u2i.yml
 
 AllCops:
+  Include:
+    - '**/Rakefile'
   Exclude:
     - spec/spec_helper.rb
+    - vendor/**/*
 
 Metrics/LineLength:
   Max: 80

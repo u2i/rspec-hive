@@ -1,0 +1,17 @@
+sudo: false
+
+services:
+  - docker
+language: ruby
+rvm:
+  - 2.1
+env: CONFIG_FILE_NAME=examples/config.yml PORT=10000 CONFIG_FILE=examples/config.yml
+
+before_script:
+  - bundle exec rake spec:hive:config:generate_default
+  - bundle exec rake spec:hive:docker:run
+
+script:
+  - bundle exec rake spec
+  - bundle exec rake rubocop
+  - sleep 15 && bundle exec rake hive_spec
