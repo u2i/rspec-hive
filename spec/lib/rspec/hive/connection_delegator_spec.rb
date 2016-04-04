@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe HiveTests::ConnectionDelegator do
+describe RSpec::Hive::ConnectionDelegator do
   describe '#load_into_table' do
     let(:host_shared_directory_path) { '/tmp/host' }
     let(:docker_file_path) { '/tmp/docked/test_file' }
     let(:config) do
       double(
-        HiveTests::Configuration,
+        RSpec::Hive::Configuration,
         host_shared_directory_path: host_shared_directory_path
       )
     end
@@ -171,7 +171,7 @@ describe HiveTests::ConnectionDelegator do
     let(:docker_shared_directory_path) { '/tmp/docker' }
     let(:config) do
       double(
-        HiveTests::Configuration,
+        RSpec::Hive::Configuration,
         docker_shared_directory_path: docker_shared_directory_path
       )
     end

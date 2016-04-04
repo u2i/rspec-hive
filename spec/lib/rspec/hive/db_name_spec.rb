@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe HiveTests::DbName do
+describe RSpec::Hive::DbName do
   describe '.random_name' do
     subject { described_class.random_name }
 

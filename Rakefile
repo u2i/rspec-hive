@@ -1,5 +1,5 @@
 require 'bundler/gem_tasks'
-load 'lib/rake_tasks/docker.rake'
+load 'lib/rspec/rake_tasks/docker.rake'
 
 begin
   require 'rspec/core/rake_task'

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe HiveTests do
+describe RSpec::Hive do
   describe 'configure' do
     let(:expected_host) { '127.0.0.1' }
     let(:expected_port) { '10000' }

@@ -23,7 +23,7 @@ if ENV['COVERAGE']
 end
 
 RSpec.configure do |config|
-  require 'hive_tests'
+  require 'rspec/hive'
   require 'rspec/its'
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

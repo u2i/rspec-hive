@@ -1,15 +1,15 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'hive_tests/version'
+require 'rspec/hive/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'hive_tests'
-  spec.version       = HiveTests::VERSION
+  spec.name          = 'rspec-hive'
+  spec.version       = RSpec::Hive::VERSION
   spec.authors       = ['Wojtek Mielczarek', 'Mikołaj Nowak']
   spec.email         = %w(wojtek.mielczarek@u2i.com mikolaj.nowak@u2i.com)
   spec.summary       = 'RSpec addition to test hive queries'
-  spec.description   = 'HiveTests let you test your hive queries
+  spec.description   = 'RSpecHive let you test your hive queries
                         connecting to hive instance installed on docker'
   spec.homepage      = 'https://github.com/u2i/ns-rspec-hive'
   spec.license       = 'MIT'
