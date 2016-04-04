@@ -3,7 +3,7 @@ require_relative 'query'
 require_relative 'config_helper'
 
 describe Query do
-  include HiveTests::WithHiveConnection
+  include RSpec::Hive::WithHiveConnection
 
   subject { described_class.new }
 
