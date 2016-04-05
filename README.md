@@ -2,9 +2,9 @@
 [![Test Coverage](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/badges/85abbc07acb75f664185/coverage.svg)](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/coverage)
 [![Issue Count](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/badges/85abbc07acb75f664185/issue_count.svg)](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/feed)
 
-# HiveTests
+# rpsec-hive
 
-HiveTests is a utility gem to help you write beautiful rspec tests for hive queries. The idea is simple - you just launch a docker machine with hadoop and hive installed. To test a query you create a simple RSpec file and extend it with `HiveTests::WithHiveConnection`.
+rspec-hive is a utility gem to help you write beautiful rspec tests for hive queries. The idea is simple - you just launch a docker machine with hadoop and hive installed. To test a query you create a simple RSpec file and extend it with `RSpec::Hive::WithHiveConnection`.
 
 We have prepared a few simple rake tasks that will let you create sample config file, download correct docker image and run docker container with proper parameters.
 
@@ -13,7 +13,7 @@ We have prepared a few simple rake tasks that will let you create sample config 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'hive_tests'
+gem 'rspec-hive'
 ```
 
 And then execute:
@@ -22,7 +22,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install hive_tests
+    $ gem install rspec-hive
 
 ### Configuring tests
 
@@ -30,11 +30,11 @@ Or install it yourself as:
 
 To run tests on docker you will need a configurtion file that will let you put up a docker container and maintain your connection to this container from tests. You can do this manually and provide just a path to file, but we have also prepared special rake tasks to help you out. Try running:
 
-    $ rake hive_tests:config:generate_default
+    $ rake spec:hive:config:generate_default
 
-It will create `hive_tests_config.yml` in your current directory. You can of course pass some parameters to this rake task doing something like:
+It will create `rspec-hive.yml` in your current directory. You can of course pass some parameters to this rake task doing something like:
 
-    $ rake hive_tests:config:generate_default HOST=127.0.0.1 PORT=5032
+    $ rake spec:hive:config:generate_default HOST=127.0.0.1 PORT=5032
 
 You can specify following arguments:
 * HOST - ip of docker container
@@ -57,20 +57,20 @@ On Linux you can run the docker daemon by using:
 #### Docker image
 Once you have generated a config file you should download to your local machine proper docker image. You can create your own docker image. However if you would like to use ours just run:
 
-    $ rake hive_tests:docker:download_image
-    
+    $ rake spec:hive:docker:download_image
+
 It will download `nielsensocial/hive` from [dockerhub](https://hub.docker.com/r/nielsensocial/hive/).
 You can change Docker's storage base directory (where container and images go) using the -goption when starting the Docker daemon.
 If you have another image you can also use this rake task and provide special argument:
 * DOCKER_IMAGE_NAME - image name that should be pulled
 
- 
+
 #### Running docker container
 You should now be ready to run your docker container. To do this run:
 
-    $ rake hive_tests:docker:run
+    $ rake spec:hive:docker:run
 
-This command will run docker container using default config `hive_tests_config.yml` and default docker image `nielsensocial/hive`. You can pass arguments like:
+This command will run docker container using default config `rspec-hive.yml` and default docker image `nielsensocial/hive`. You can pass arguments like:
 * CONFIG_FILE - name of config file to use
 * DOCKER_IMAGE_NAME - docker image to use
 
@@ -102,21 +102,21 @@ And in the presented console connect by jdbc to hive:
 
 ## Usage
 
-In `examples/` directory we have prepared a simple query. It is available in `query_spec.rb` file. Notice how we configure `hive_tests` by using:
-    
+In `examples/` directory we have prepared a simple query. It is available in `query_spec.rb` file. Notice how we configure `rspec-hive` by using:
+
     require_relative 'config_helper'
 
 Where we invoke:
-    
-    HiveTests.configure(File.join(__dir__, './../hive_tests_config.yml'))
-    
+
+    RSpec::Hive.configure(File.join(__dir__, '/config.yml'))
+
 ## Note
 
 Please remember docker does not remove containers automatically, use `docker ps -a` to list all unused containers.
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/hive_tests/fork )
+1. Fork it ( https://github.com/[my-github-username]/rspec-hive/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

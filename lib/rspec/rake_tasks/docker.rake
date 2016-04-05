@@ -28,7 +28,7 @@ namespace :spec do
         system 'mkdir', '-p', default_values['hive']['host_shared_directory_path']
         file_path = File.join(
           ENV['CONFIG_FILE_DIR'] || '.',
-          ENV['CONFIG_FILE_NAME'] || 'hive_tests_config.yml'
+          ENV['CONFIG_FILE_NAME'] || 'rspec-hive.yml'
         )
         File.open(file_path, 'w+') do |f|
           f.write default_values.to_yaml
@@ -43,7 +43,7 @@ namespace :spec do
       task :run do
         puts 'Command `docker` not found.'.red unless system('which docker')
 
-        config_filepath = ENV['CONFIG_FILE'] || 'hive_tests_config.yml'
+        config_filepath = ENV['CONFIG_FILE'] || 'rspec-hive.yml'
         docker_image_name = ENV['DOCKER_IMAGE_NAME'] || 'nielsensocial/hive'
         unless File.exist? config_filepath
           puts "There's no config file #{config_filepath} please generate default or provide custom config.".red
