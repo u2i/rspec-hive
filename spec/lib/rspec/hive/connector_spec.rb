@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe HiveTests::Connector do
+describe RSpec::Hive::Connector do
   describe '#start_connection' do
     let(:tcli_connection) { double(RBHive::TCLIConnection) }
-    let(:connection_delegator) { double(HiveTests::ConnectionDelegator) }
+    let(:connection_delegator) { double(RSpec::Hive::ConnectionDelegator) }
     let(:host) { '127.0.0.1' }
     let(:port) { '10000' }
     let(:options_mock) { double('options') }
@@ -16,7 +16,7 @@ describe HiveTests::Connector do
     end
     let(:configuration) do
       double(
-        HiveTests::Configuration,
+        RSpec::Hive::Configuration,
         host: host,
         port: port,
         hive_options: hive_options
@@ -30,7 +30,7 @@ describe HiveTests::Connector do
         allow(subject).to receive(:connection_options) { options_mock }
         expect(RBHive::TCLIConnection).to receive(:new).
           with(host, port, options_mock) { tcli_connection }
-        expect(HiveTests::ConnectionDelegator).to receive(:new).
+        expect(RSpec::Hive::ConnectionDelegator).to receive(:new).
           with(tcli_connection, configuration) { connection_delegator }
 
         expect(connection_delegator).to receive(:open).once
@@ -57,10 +57,10 @@ describe HiveTests::Connector do
 
       before do
         allow(subject).to receive(:connection_options) { options_mock }
-        expect(HiveTests::DbName).to receive(:random_name) { db_random_name }
+        expect(RSpec::Hive::DbName).to receive(:random_name) { db_random_name }
         expect(RBHive::TCLIConnection).to receive(:new).
           with(host, port, options_mock) { tcli_connection }
-        expect(HiveTests::ConnectionDelegator).to receive(:new).
+        expect(RSpec::Hive::ConnectionDelegator).to receive(:new).
           with(tcli_connection, configuration) { connection_delegator }
 
         expect(connection_delegator).to receive(:open).once
