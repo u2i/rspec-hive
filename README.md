@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/u2i/rspec-hive.svg?branch=master)](https://travis-ci.org/u2i/rspec-hive)
+[![Dependency Status](https://gemnasium.com/u2i/rspec-hive.svg)](https://gemnasium.com/u2i/rspec-hive)
 [![Code Climate](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/badges/85abbc07acb75f664185/gpa.svg)](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/feed)
 [![Test Coverage](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/badges/85abbc07acb75f664185/coverage.svg)](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/coverage)
 [![Issue Count](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/badges/85abbc07acb75f664185/issue_count.svg)](https://codeclimate.com/repos/567b03d7bd3f3b2512002248/feed)
