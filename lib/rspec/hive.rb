@@ -7,7 +7,9 @@ require 'rspec/hive/with_hive_connection'
 
 module RSpec
   module Hive
-    attr_reader :configuration
+    def self.configuration
+      @configuration
+    end
 
     def self.configure(file_name = nil)
       @configuration = new_configuration(file_name)
