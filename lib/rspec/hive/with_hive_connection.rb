@@ -15,7 +15,7 @@ module RSpec
         end
 
         mod.after(:all) do
-          hive_connector.stop_connection(connection) unless hive_connector && connection
+          hive_connector.stop_connection(connection) if hive_connector && @connection
         end
       end
 
