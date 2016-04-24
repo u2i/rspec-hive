@@ -14,4 +14,4 @@ before_script:
 script:
   - bundle exec rake spec
   - bundle exec rake rubocop
-  - sleep 15 && bundle exec rake hive_spec
+  - bundle exec rake hive_spec

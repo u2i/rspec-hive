@@ -1,9 +1,13 @@
+require_relative 'exponential_backoff'
+
 module RSpec
   module Hive
     module WithHiveConnection
       def self.included(mod)
         mod.before(:all) do
-          connection
+          ExponentialBackoff.retryable(on: Thrift::TransportException) do
+            connection
+          end
         end
 
         mod.before(:each) do
@@ -11,7 +15,7 @@ module RSpec
         end
 
         mod.after(:all) do
-          hive_connector.stop_connection(connection) unless hive && connection
+          hive_connector.stop_connection(connection) unless hive_connector && connection
         end
       end
 
