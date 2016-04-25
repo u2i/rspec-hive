@@ -2,13 +2,6 @@ require_relative 'spec_helper'
 require_relative '../lib/query'
 require 'rspec/hive/query_builder_helper'
 
-RSpec::Matchers.define :match_hive_array do |expected|
-  match do |actual|
-    actual == expected
-  end
-end
-
-
 RSpec.describe Query do
   include RSpec::Hive::WithHiveConnection
   include RSpec::Hive::QueryBuilderHelper
@@ -34,25 +27,24 @@ RSpec.describe Query do
       query = "SELECT * FROM `#{subject.table_name}` WHERE amount > 3.2"
       query_result = connection.fetch(query)
 
-      expected_row = [
-        a_string_matching('Wojtek'),
-        a_string_matching('Cos'),
-        a_string_matching(/3\.7.*/),
+      expected_result_set = [
+        [a_string_matching('Wojtek'), 'Cos', a_string_matching(/3\.7.*/)]
       ]
 
-      expect(query_result).to match_hive_array(expected_row)
+      expect(query_result).to match_result_set(expected_result_set)
     end
 
     it 'query returns one row 2' do
       query = "SELECT * FROM `#{subject.table_name}` WHERE amount < 3.2"
-      query_result = connection.fetch(query).first.values
+      query_result = connection.fetch(query)
 
-      expected_row = [
-        a_string_matching('Mikolaj'),
-        a_string_matching('Cos'),
-        a_string_matching(/1\.2.*/)
+      expected_result_set = [
+        {name: 'Mikolaj',
+         address: 'Cos',
+         amount: a_string_matching(/1\.2.*/)
+      }
       ]
-      expect(query_result).to contain_exactly(*expected_row)
+      expect(query_result).to match_result_set(expected_result_set)
     end
   end
 
