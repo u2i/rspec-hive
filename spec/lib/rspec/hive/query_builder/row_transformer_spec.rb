@@ -1,4 +1,4 @@
-require 'rspec/hive/query_builder/row_transformer'
+require 'spec_helper'
 
 RSpec.describe RSpec::Hive::QueryBuilder::RowTransformer do
   let(:transformer) { described_class.new(schema, missing_column_strategy) }

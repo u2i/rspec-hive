@@ -1,3 +1,5 @@
+require 'rbhive'
+
 class Query
   def table_schema
     RBHive::TableSchema.new('people', nil, line_sep: '\n', field_sep: ';') do

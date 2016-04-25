@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'rspec/hive/query_builder/rows'
 
 RSpec.describe RSpec::Hive::QueryBuilder::Rows do

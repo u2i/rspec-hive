@@ -1,4 +1,4 @@
-require 'rspec/hive/query_builder'
+require 'spec_helper'
 
 RSpec.describe RSpec::Hive::QueryBuilder do
   let(:connection) { instance_double(RBHive::TCLIConnection) }

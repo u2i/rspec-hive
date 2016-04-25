@@ -1,7 +1,13 @@
-require 'spec_helper'
-require_relative 'query'
-require_relative 'config_helper'
+require_relative 'spec_helper'
+require_relative '../lib/query'
 require 'rspec/hive/query_builder_helper'
+
+RSpec::Matchers.define :match_hive_array do |expected|
+  match do |actual|
+    actual == expected
+  end
+end
+
 
 RSpec.describe Query do
   include RSpec::Hive::WithHiveConnection
@@ -20,20 +26,21 @@ RSpec.describe Query do
     end
 
     before do
-      connection.execute(subject.table_schema.create_table_statement)
-      into_hive(subject.table_schema).insert(*input_data).execute
+      connection.execute(schema.create_table_statement)
+      into_hive(schema).insert(*input_data).execute
     end
 
     it 'query returns one row' do
       query = "SELECT * FROM `#{subject.table_name}` WHERE amount > 3.2"
-      query_result = connection.fetch(query).first.values
+      query_result = connection.fetch(query)
 
       expected_row = [
         a_string_matching('Wojtek'),
         a_string_matching('Cos'),
         a_string_matching(/3\.7.*/),
       ]
-      expect(query_result).to contain_exactly(*expected_row)
+
+      expect(query_result).to match_hive_array(expected_row)
     end
 
     it 'query returns one row 2' do
@@ -51,8 +58,8 @@ RSpec.describe Query do
 
   describe 'use mocked rows' do
     before do
-      connection.execute(subject.table_schema.create_table_statement)
-      into_hive(subject.table_schema).insert(row1, row2).with_stubbing.execute
+      connection.execute(schema.create_table_statement)
+      into_hive(schema).insert(row1, row2).with_stubbing.execute
     end
 
     let(:row1) { {name: 'Michal'} }
@@ -73,10 +80,10 @@ RSpec.describe Query do
         end
       end
       #
-      # into_hive(subject.table_schema).insert(name: 'Michal').partition(country_code: 'us')
+      # into_hive(schema).insert(name: 'Michal').partition(country_code: 'us')
       #
       # # Given
-      # part = into_hive(subject.table_schema).partition(country_code: 'us').with_mocking
+      # part = into_hive(schema).partition(country_code: 'us').with_mocking
       # i = part.insert([{name: 'Michal'}, {amount: 12.324}])
       # i2 = part.insert([{name: 'Michal'}, {amount: 12.324}])
       # i.execute(connection)
@@ -100,8 +107,8 @@ RSpec.describe Query do
       # expect(rows).to match_rows().with_schema(schema).unordered
       # expect(rows).to match_rows()
       #
-      # into_hive(subject.table_schema).with_mocking.insert(name: 'Michal').partition(country_code: 'us')
-      # into(subject.table_schema).with_mocking.insert(name: 'Michal').partition(country_code: 'us')
+      # into_hive(schema).with_mocking.insert(name: 'Michal').partition(country_code: 'us')
+      # into(schema).with_mocking.insert(name: 'Michal').partition(country_code: 'us')
       #
       # with_hive_connection do
       # end

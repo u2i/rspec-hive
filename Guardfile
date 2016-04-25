@@ -14,8 +14,8 @@ group :red_green_refactor, halt_on_fail: true do
   end
 
   guard :rspec, cmd: 'bundle exec rspec --pattern=examples/**/*_spec.rb' do
-    watch(%r{^examples/.+_spec\.rb$})
-    watch(%r{^examples/(.+)\.rb$}) { |m| "examples/#{m[1]}_spec.rb" }
+    watch(%r{^examples/spec/.+_spec\.rb$})
+    watch(%r{^examples/lib/(.+)\.rb$}) { |m| "examples/spec/#{m[1]}_spec.rb" }
   end if system(detect_docker)
 
   guard :rubocop do
