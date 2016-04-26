@@ -1,6 +1,5 @@
 require_relative 'spec_helper'
 require_relative '../lib/query'
-require 'rspec/hive/query_builder_helper'
 
 RSpec.describe Query do
   include RSpec::Hive::WithHiveConnection
@@ -10,114 +9,95 @@ RSpec.describe Query do
 
   let(:schema) { subject.table_schema }
 
-  describe 'hive query' do
+  before { connection.execute(schema.create_table_statement) }
+
+  context 'if we have a partition' do
+    let(:schema) do
+      RBHive::TableSchema.new('partitioned_people', nil, line_sep: '\n', field_sep: ';') do
+        column :name, :string
+        column :address, :string
+        column :amount, :float
+        partition :dth, :int
+      end
+    end
     let(:input_data) do
       [
         ['Mikolaj', 'Cos', 1.23, 1],
         ['Wojtek', 'Cos', 3.76, 2]
       ]
     end
+    let(:dth) { '2016042210' }
+    let(:query) { "SELECT * FROM `#{schema.name}` WHERE amount > 3.2" }
+    let(:query_result) { connection.fetch(query) }
+    let(:expected_result_array) do
+      [[a_string_matching('Wojtek'), 'Cos', be_within(0.01).of(3.76), dth]]
+    end
 
     before do
-      connection.execute(schema.create_table_statement)
-      into_hive(schema).insert(*input_data).execute
+      connection.execute("ALTER TABLE #{schema.name} ADD PARTITION (dth='#{dth}')")
+      into_hive(schema).insert(*input_data).partition(dth: dth).execute
     end
 
-    it 'query returns one row' do
-      query = "SELECT * FROM `#{subject.table_name}` WHERE amount > 3.2"
-      query_result = connection.fetch(query)
-
-      expected_result_set = [
-        [a_string_matching('Wojtek'), 'Cos', be_within(0.01).of(3.76)]
-      ]
-
-      expect(query_result).to match_result_set(expected_result_set)
-    end
-
-    it 'query returns one row 2' do
-      query = "SELECT * FROM `#{subject.table_name}` WHERE amount < 3.2"
-      query_result = connection.fetch(query)
-
-      expected_result_set = [
-        {name: 'Mikolaj',
-         address: 'Cos',
-         amount: be_within(0.01).of(1.23)
-      }
-      ]
-      expect(query_result).to match_result_set(expected_result_set)
+    it 'returns Wojtek' do
+      expect(query_result).to match_result_set(expected_result_array)
     end
   end
 
-  describe 'use mocked rows' do
-    before do
-      connection.execute(schema.create_table_statement)
-      into_hive(schema).insert(row1, row2).with_stubbing.execute
+  context 'without stubbing strategy' do
+    let(:input_data) do
+      [
+        ['Mikolaj', 'Cos', 1.23, 1],
+        ['Wojtek', 'Cos', 3.76, 2]
+      ]
+    end
+    let(:query_result) { connection.fetch(query) }
+
+    before { into_hive(schema).insert(*input_data).execute }
+
+    context 'when querying for amount > 3.2' do
+      let(:query) { "SELECT * FROM `#{subject.table_name}` WHERE amount > 3.2" }
+      let(:expected_result_array) do
+        [
+          [a_string_matching('Wojtek'), 'Cos', be_within(0.01).of(3.76)]
+        ]
+      end
+
+      it 'returns Wojtek' do
+        expect(query_result).to match_result_set(expected_result_array)
+      end
+    end
+  end
+
+  context 'with stubbing strategy' do
+    let(:input_data) { [{name: 'Michal'}, {name: 'Wojtek'}] }
+    let(:query_result) { connection.fetch(query) }
+
+    before { into_hive(schema).insert(*input_data).with_stubbing.execute }
+
+    context "when querying for name = 'Wojtek'" do
+      let(:query) do
+        "SELECT * FROM `#{subject.table_name}` WHERE name='Wojtek'"
+      end
+      let(:expected_result_array) do
+        [
+          ['Wojtek', a_kind_of(String), a_kind_of(Float)]
+        ]
+      end
+
+      it 'returns Wojtek' do
+        expect(query_result).to match_result_set(expected_result_array)
+      end
     end
 
-    let(:row1) { {name: 'Michal'} }
-    let(:row2) { {name: 'Wojtek'} }
-
-    it 'mocks unspecified values' do
-      query = "SELECT * FROM `#{subject.table_name}`"
-      result = connection.fetch(query)
-
-      aggregate_failures do
-        names = result.map { |row| row[:name] }
-        expect(names).to contain_exactly('Michal', 'Wojtek')
-
-        result.each do |row|
-          expect(row[:address]).not_to be_empty
-          expect(row[:address]).not_to eq('\N')
-          expect(row[:amount]).not_to be_nil
-          expect(row[:amount]).not_to eq('\N')
-        end
+    context 'when querying for name = Michal' do
+      let(:query) do
+        "SELECT * FROM `#{subject.table_name}` WHERE name='Michal'"
       end
-      #
-      # into_hive(schema).insert(name: 'Michal').partition(country_code: 'us')
-      #
-      # # Given
-      # part = into_hive(schema).partition(country_code: 'us').with_mocking
-      # i = part.insert([{name: 'Michal'}, {amount: 12.324}])
-      # i2 = part.insert([{name: 'Michal'}, {amount: 12.324}])
-      # i.execute(connection)
-      # i2.execute(connection)
-      #
-      # # When
-      # row = query.fetch(query_statement).first
-      #
-      # # Then
-      # expect(row).to match_row({})
-      # expect(row).to match_row({}).with_schema(schema)
-      # expect(row).to match_row([]).with_schema()
-      # expect(row).to match_row([])
-      #
-      # # When
-      # rows = query.fetch(query_statement)
-      #
-      # # Then
-      # expect(rows).to match_rows().with_schema(schema)
-      # expect(rows).to match_rows().with_schema(schema).ordered
-      # expect(rows).to match_rows().with_schema(schema).unordered
-      # expect(rows).to match_rows()
-      #
-      # into_hive(schema).with_mocking.insert(name: 'Michal').partition(country_code: 'us')
-      # into(schema).with_mocking.insert(name: 'Michal').partition(country_code: 'us')
-      #
-      # with_hive_connection do
-      # end
-      #
-      # schema1
-      # schema2
-      # table11 = [{name: 'asd'}]
-      # table12 = [{name: 'asd'}]
-      # table2 = [{name2: 'asd'}]
-      # partition11 = {country_code: 'us'}
-      # partition12 = {country_code: 'it'}
-      #
-      # into_hive(schema1).partition(partition11).insert(table11).execute(connection)
-      # into_hive(schema1).partition(partition11).insert(table11)
-      #
-      # setup_table(connection, schema1, partition11 => [table11])
+      let(:expected_result_hash) { [{name: 'Michal'}] }
+
+      it 'returns Michal' do
+        expect(query_result).to match_result_set(expected_result_hash).partially
+      end
     end
   end
 end

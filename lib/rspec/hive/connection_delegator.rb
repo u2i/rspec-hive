@@ -15,10 +15,6 @@ module RSpec
         execute(table_schema.create_table_statement)
       end
 
-      def load_rows(rows)
-        load_into_table(rows.schema, rows.values, rows.partition)
-      end
-
       def load_partitions(table_name, partitions)
         partitions = partition_clause(partitions)
         query = "ALTER TABLE #{table_name} ADD #{partitions}"

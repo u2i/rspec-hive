@@ -5,7 +5,8 @@ module RSpec
     class QueryBuilder
       class TypeFaker
         class << self
-          def mock(type)
+          # rubocop:disable Metrics/CyclomaticComplexity
+          def fake(type)
             case type
             when :int
               Faker::Number.number(9)
@@ -27,6 +28,7 @@ module RSpec
               raise ArgumentError, "Unsupported type: #{type}"
             end
           end
+          # rubocop:enable Metrics/CyclomaticComplexity
         end
       end
     end

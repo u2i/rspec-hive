@@ -7,7 +7,8 @@ RSpec::Matchers.define :match_result_set do |expected|
     expected.each.with_index.all? do |expected_row, i|
       if expected_row.respond_to?(:each_pair)
         if @partial_match
-          values_match?(expected_row.values, actual[i].values_at(*expected_row.keys))
+          selected_actual_values = actual[i].values_at(*expected_row.keys)
+          values_match?(expected_row.values, selected_actual_values)
         else
           values_match?(expected_row, actual[i])
         end

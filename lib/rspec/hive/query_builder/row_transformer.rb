@@ -13,20 +13,7 @@ module RSpec
           if row.respond_to?(:each_pair)
             mock_hive_row(row)
           elsif row.respond_to?(:each)
-            size = schema.instance_variable_get(:@columns).size
-            missing = size - row.size
-            if missing > 0
-              schema.columns.map.with_index do |column, index|
-                if index > row.size
-                  strategy.missing(column)
-                else
-                  row[index]
-                end
-              end
-
-            else
-              row
-            end
+            array_row(row)
           else
             raise ArgumentError, 'Array or Hash required!'
           end
@@ -36,11 +23,33 @@ module RSpec
 
         attr_reader :schema, :strategy
 
-        HIVE_NIL = '\N'
+        HIVE_NIL = '\N'.freeze
+
+        def array_row(row)
+          size = schema.columns.size
+          missing = size - row.size
+          if missing > 0
+            row_with_missing_columns(row)
+          else
+            row
+          end
+        end
+
+        def row_with_missing_columns(row)
+          schema.columns.map.with_index do |column, index|
+            if index > row.size
+              strategy.missing(column)
+            else
+              row[index]
+            end
+          end
+        end
 
         def mock_hive_row(partial_row)
+          symbolized_row = Hash[partial_row.map { |k, v| [k.to_sym, v] }]
+
           schema.columns.map do |column|
-            value = partial_row.fetch(column.name) { strategy.missing(column) }
+            value = symbolized_row.fetch(column.name.to_sym) { strategy.missing(column) }
             nil_to_null(value)
           end
         end

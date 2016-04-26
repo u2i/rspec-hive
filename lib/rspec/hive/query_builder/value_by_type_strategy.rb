@@ -5,7 +5,7 @@ module RSpec
     class QueryBuilder
       class ValueByTypeStrategy
         def missing(column)
-          RSpec::Hive::QueryBuilder::TypeFaker.mock(column.type)
+          RSpec::Hive::QueryBuilder::TypeFaker.fake(column.type)
         end
       end
     end

@@ -5,6 +5,7 @@ require 'rspec/hive/connection_delegator'
 require 'rspec/hive/connector'
 require 'rspec/hive/with_hive_connection'
 require 'rspec/hive/query_builder'
+require 'rspec/hive/query_builder_helper'
 require 'rspec/hive/matchers'
 
 module RSpec

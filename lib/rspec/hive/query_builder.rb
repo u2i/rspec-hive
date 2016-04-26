@@ -8,46 +8,57 @@ module RSpec
       def initialize(schema, connection)
         @schema = schema
         @connection = connection
-        @partition = {}
+        @partition_hash = {}
         @rows = []
         @stubbing = false
       end
 
-      def partition(partition)
-        dup.tap do |builder|
-          builder.partition.merge(partition)
-        end
+      def partition(hash)
+        spawn.partition!(hash)
       end
 
-      # []
-      # [[], []]
-      def insert(*rows)
-        dup.tap do |builder|
-          builder.rows.concat(rows)
-        end
+      def partition!(partition)
+        partition_hash.merge!(partition)
+        self
+      end
+
+      def insert(*new_rows)
+        spawn.insert!(new_rows)
+      end
+
+      def insert!(new_rows)
+        rows.concat(new_rows)
+        self
       end
 
       def execute
-        if partition.empty?
+        if partition_hash.empty?
           connection.load_into_table(schema, transformed_rows)
         else
-          connection.load_into_table(schema, transformed_rows, partition)
+          connection.load_into_table(schema, transformed_rows, partition_hash)
         end
       end
 
       def with_stubbing
-        dup.tap do |builder|
-          builder.stubbing = true
-        end
+        spawn.with_stubbing!
+      end
+
+      def with_stubbing!
+        self.stubbing = true
+        self
       end
 
       protected
 
-      attr_accessor :partition, :connection, :rows, :stubbing
+      attr_accessor :partition_hash, :connection, :rows, :stubbing
 
       private
 
       attr_reader :schema
+
+      def spawn
+        clone
+      end
 
       def stubbing?
         stubbing

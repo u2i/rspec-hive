@@ -4,7 +4,7 @@ Rails:
   Enabled: false
 
 AllCops:
-  RunRailsCops: false
+  TargetRubyVersion: 2.1
   Include:
     - '**/Rakefile'
   Exclude:
@@ -13,10 +13,11 @@ AllCops:
     - examples/query_spec.rb
 
 Metrics/LineLength:
-  Max: 80
+  Max: 120
   Enabled: true
   Exclude:
     - spec/**/*
+    - examples/spec/**/*
 
 Style/SignalException:
   EnforcedStyle: only_raise
