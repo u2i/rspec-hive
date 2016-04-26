@@ -1,5 +1,8 @@
 inherit_from: .rubocop_u2i.yml
 
+Rails:
+  Enabled: false
+
 AllCops:
   Include:
     - '**/Rakefile'

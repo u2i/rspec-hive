@@ -56,15 +56,13 @@ describe RSpec::Hive::Configuration do
 
     before { allow(Dir).to receive(:mktmpdir) { mock_tmpdir } }
 
-    subject { described_class.new }
-
     context 'when on Mac' do
       let(:mock_tmpdir) { '/Users/Shared/test/' }
       let(:expected_host) { '192.168.99.100' }
       let(:expected_host_shared_directory_path) { '/Users/Shared/test/spec-tmp-files' }
 
       before do
-        allow_any_instance_of(described_class).to receive(:mac?) { true }
+        RbConfig::CONFIG['host_os'] = 'mac os'
       end
 
       include_examples('config')
@@ -76,7 +74,7 @@ describe RSpec::Hive::Configuration do
       let(:expected_host_shared_directory_path) { '/tmp/test/spec-tmp-files' }
 
       before do
-        allow_any_instance_of(described_class).to receive(:mac?) { false }
+        RbConfig::CONFIG['host_os'] = 'linux'
       end
 
       include_examples('config')
