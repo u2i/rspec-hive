@@ -1,3 +1,12 @@
+GIT
+  remote: git://github.com/u2i/rbhive.git
+  revision: 0d8eaa45c494e6e567f1523cacecb1786eee0508
+  tag: v0.7.0
+  specs:
+    rbhive (0.7.0)
+      json
+      thrift (~> 0.9)
+
 PATH
   remote: .
   specs:
@@ -60,9 +69,6 @@ GEM
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
-    rbhive (0.6.0)
-      json
-      thrift (= 0.9.0)
     retryable (2.0.3)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
@@ -96,7 +102,7 @@ GEM
     simplecov-html (0.10.0)
     slop (3.6.0)
     thor (0.19.1)
-    thrift (0.9.0)
+    thrift (0.9.3.0)
     timers (4.0.1)
       hitimes
     unicode-display_width (1.0.3)
@@ -112,7 +118,7 @@ DEPENDENCIES
   guard-rubocop (~> 1.2)
   pry
   pry-byebug
-  rbhive (~> 0.6.0)
+  rbhive!
   rspec (~> 3.4)
   rspec-hive!
   rspec-its (~> 1.2)

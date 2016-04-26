@@ -4,8 +4,8 @@ require 'rspec/hive/query_builder_helper'
 RSpec.describe 'match_result_set' do
   include RSpec::Hive::QueryBuilderHelper
 
-  let(:john) { {first_name: 'John', last_name: 'Lennon'} }
-  let(:paul) { {first_name: 'Paul', last_name: 'McCartney'} }
+  let(:john) { {first_name: 'John', last_name: 'Lennon', age: 40} }
+  let(:paul) { {first_name: 'Paul', last_name: 'McCartney', age: 73} }
 
   let(:full_match) { expect(actual_rows).to match_result_set(expected_rows) }
   let(:partial_match) { expect(actual_rows).to match_result_set(expected_rows).partially }
@@ -54,7 +54,7 @@ RSpec.describe 'match_result_set' do
         end
 
         context 'when the actual and expected rows are equal with rspec matchers' do
-          let(:expected_rows) { [[a_string_matching('John'), a_string_matching(/lennon/i)]] }
+          let(:expected_rows) { [[a_string_matching('John'), a_string_matching(/lennon/i), 40]] }
 
           specify { full_match }
         end

@@ -28,7 +28,7 @@ RSpec.describe Query do
       query_result = connection.fetch(query)
 
       expected_result_set = [
-        [a_string_matching('Wojtek'), 'Cos', a_string_matching(/3\.7.*/)]
+        [a_string_matching('Wojtek'), 'Cos', be_within(0.01).of(3.76)]
       ]
 
       expect(query_result).to match_result_set(expected_result_set)
@@ -41,7 +41,7 @@ RSpec.describe Query do
       expected_result_set = [
         {name: 'Mikolaj',
          address: 'Cos',
-         amount: a_string_matching(/1\.2.*/)
+         amount: be_within(0.01).of(1.23)
       }
       ]
       expect(query_result).to match_result_set(expected_result_set)
@@ -66,9 +66,10 @@ RSpec.describe Query do
         expect(names).to contain_exactly('Michal', 'Wojtek')
 
         result.each do |row|
-          expect(row[:address]).not_to be_nil
+          expect(row[:address]).not_to be_empty
           expect(row[:address]).not_to eq('\N')
-          expect(row[:amount]).to match(/\d+\.\d+/)
+          expect(row[:amount]).not_to be_nil
+          expect(row[:amount]).not_to eq('\N')
         end
       end
       #
