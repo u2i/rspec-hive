@@ -56,3 +56,8 @@ Metrics/MethodLength:
 RSpec/FilePath:
   Exclude:
     - spec/routing/**/*_routing_spec.rb
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/lib/rspec/hive/matchers_spec.rb
+

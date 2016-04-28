@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe RSpec::Hive::ConnectionDelegator do
+RSpec.describe RSpec::Hive::ConnectionDelegator do
   describe '#load_into_table' do
     let(:host_shared_directory_path) { '/tmp/host' }
     let(:docker_file_path) { '/tmp/docked/test_file' }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'tempfile'
 
-describe RSpec::Hive::Configuration do
+RSpec.describe RSpec::Hive::Configuration do
   RSpec.shared_examples('config') do
     its(:host) do
       is_expected.to eq(expected_host)

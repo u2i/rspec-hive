@@ -5,7 +5,9 @@ services:
 language: ruby
 rvm:
   - 2.1
-env: CONFIG_FILE_NAME=examples/config.yml PORT=10000 CONFIG_FILE=examples/config.yml
+  - 2.2
+  - 2.3.0
+env: CONFIG_FILE_NAME=rspec-hive.yml PORT=10000 CONFIG_FILE=rspec-hive.yml
 
 before_script:
   - bundle exec rake spec:hive:config:generate_default
@@ -14,4 +16,4 @@ before_script:
 script:
   - bundle exec rake spec
   - bundle exec rake rubocop
-  - sleep 15 && bundle exec rake hive_spec
+  - bundle exec rake hive_spec

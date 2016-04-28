@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe RSpec::Hive::Connector do
+RSpec.describe RSpec::Hive::Connector do
   describe '#start_connection' do
     let(:tcli_connection) { double(RBHive::TCLIConnection) }
     let(:connection_delegator) { double(RSpec::Hive::ConnectionDelegator) }
