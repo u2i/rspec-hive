@@ -20,4 +20,13 @@ rescue LoadError
   puts 'Cannot load RuboCop Rake tasks'
 end
 
-task default: [:spec, :rubocop]
+detect_docker = <<-BASH
+  CONTAINER_IDS=`docker ps -q --filter='ancestor=nielsensocial/hive' 2> /dev/null | xargs`
+  docker inspect --format='{{ .State.Running }}' $CONTAINER_IDS 2> /dev/null | uniq | grep true 2>&1 > /dev/null
+BASH
+
+if system(detect_docker)
+  task default: [:spec, :hive_spec, :rubocop]
+else
+  task default: [:spec, :rubocop]
+end
