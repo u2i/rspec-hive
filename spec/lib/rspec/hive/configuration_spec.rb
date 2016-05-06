@@ -139,7 +139,7 @@ RSpec.describe RSpec::Hive::Configuration do
       include_examples('config')
     end
 
-    context 'where there are some parametres required and optional' do
+    context 'where there are some parameters required and optional' do
       let(:yaml_hash) do
         {
           'hive' =>
