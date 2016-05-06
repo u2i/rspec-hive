@@ -53,6 +53,7 @@ RSpec.describe RSpec::Hive::Configuration do
 
   context 'when no configuration file is provided' do
     let(:expected_port) { 10000 }
+    let(:original_host_os) { RbConfig::CONFIG['host_os'] }
 
     before { allow(Dir).to receive(:mktmpdir) { mock_tmpdir } }
 
@@ -65,6 +66,8 @@ RSpec.describe RSpec::Hive::Configuration do
         RbConfig::CONFIG['host_os'] = 'mac os'
       end
 
+      after { RbConfig::CONFIG['host_os'] = original_host_os }
+
       include_examples('config')
     end
 
@@ -76,6 +79,8 @@ RSpec.describe RSpec::Hive::Configuration do
       before do
         RbConfig::CONFIG['host_os'] = 'linux'
       end
+
+      after { RbConfig::CONFIG['host_os'] = original_host_os }
 
       include_examples('config')
     end
@@ -134,7 +139,7 @@ RSpec.describe RSpec::Hive::Configuration do
       include_examples('config')
     end
 
-    context 'where there are some parametres required and optional' do
+    context 'where there are some parameters required and optional' do
       let(:yaml_hash) do
         {
           'hive' =>
