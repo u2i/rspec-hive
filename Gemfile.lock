@@ -1,20 +1,11 @@
-GIT
-  remote: git://github.com/u2i/rbhive.git
-  revision: 0d8eaa45c494e6e567f1523cacecb1786eee0508
-  tag: v0.7.0
-  specs:
-    rbhive (0.7.0)
-      json
-      thrift (~> 0.9)
-
 PATH
   remote: .
   specs:
-    rspec-hive (0.1.0)
+    rspec-hive (0.2.0)
       colorize (~> 0.7)
       faker (~> 1.6)
       rake (~> 10.0)
-      rbhive (~> 0.7.0)
+      rbhive-u2i (~> 1.0.0)
       retryable (~> 2.0.3)
       rspec (~> 3.4)
 
@@ -71,6 +62,9 @@ GEM
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
+    rbhive-u2i (1.0.0)
+      json
+      thrift (~> 0.9)
     retryable (2.0.3)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
@@ -120,7 +114,6 @@ DEPENDENCIES
   guard-rubocop (~> 1.2)
   pry
   pry-byebug
-  rbhive!
   rspec-hive!
   rspec-its (~> 1.2)
   rubocop (~> 0.39)
