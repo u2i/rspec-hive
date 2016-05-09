@@ -53,7 +53,7 @@ RSpec.describe RSpec::Hive::Configuration do
 
   context 'when no configuration file is provided' do
     let(:expected_port) { 10000 }
-    let(:original_host_os) { RbConfig::CONFIG['host_os'] }
+    let!(:original_host_os) { RbConfig::CONFIG['host_os'] }
 
     before { allow(Dir).to receive(:mktmpdir) { mock_tmpdir } }
 
