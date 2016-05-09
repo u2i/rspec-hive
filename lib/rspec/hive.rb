@@ -33,4 +33,4 @@ module RSpec
   end
 end
 
-require 'rspec/rake_tasks/railtie' if defined?(Rails)
+require 'rspec/hive/railtie' if defined?(::Rails)
