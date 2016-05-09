@@ -14,7 +14,9 @@ PATH
       colorize (~> 0.7)
       faker (~> 1.6)
       rake (~> 10.0)
+      rbhive (~> 0.7.0)
       retryable (= 2.0.3)
+      rspec (~> 3.4)
 
 GEM
   remote: https://rubygems.org/
@@ -119,7 +121,6 @@ DEPENDENCIES
   pry
   pry-byebug
   rbhive!
-  rspec (~> 3.4)
   rspec-hive!
   rspec-its (~> 1.2)
   rubocop (~> 0.39)

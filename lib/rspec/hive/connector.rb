@@ -1,7 +1,6 @@
 require 'rbhive'
 require 'tempfile'
 require 'yaml'
-require 'pry'
 
 module RSpec
   module Hive
