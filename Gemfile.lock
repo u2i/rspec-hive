@@ -15,7 +15,7 @@ PATH
       faker (~> 1.6)
       rake (~> 10.0)
       rbhive (~> 0.7.0)
-      retryable (= 2.0.3)
+      retryable (~> 2.0.3)
       rspec (~> 3.4)
 
 GEM
