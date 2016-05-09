@@ -2,7 +2,6 @@ require 'rspec/matchers'
 
 RSpec::Matchers.define :match_result_set do |expected|
   match do |actual|
-    return false if expected.size != actual.size
     @diffable_actual = []
     expected.map.with_index do |expected_row, i|
       if expected_row.respond_to?(:each_pair)
@@ -21,7 +20,7 @@ RSpec::Matchers.define :match_result_set do |expected|
       else
         raise ArgumentError, 'Unknown type'
       end
-    end.all?
+    end.all? && expected.size == actual.size
   end
 
   chain :partially do

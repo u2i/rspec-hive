@@ -20,7 +20,6 @@ RSpec.describe 'match_result_set' do
         let(:expected_rows) { [john.values] }
 
         specify { full_match_fails }
-        specify { partial_match_fails }
       end
 
       context 'when the row is given as a hash' do
