@@ -12,6 +12,10 @@ RSpec.describe 'match_result_set' do
   let(:full_match_fails) { expect(actual_rows).not_to match_result_set(expected_rows) }
   let(:partial_match_fails) { expect(actual_rows).not_to match_result_set(expected_rows).partially }
 
+  let(:partial_match_raises_error) do
+    expect { partial_match }.to raise_error(ArgumentError, "Can't use partially matcher with Arrays")
+  end
+
   context 'when the expected set has only one row' do
     context 'but the actual set has more rows' do
       let(:actual_rows) { [john, paul] }
@@ -20,6 +24,7 @@ RSpec.describe 'match_result_set' do
         let(:expected_rows) { [john.values] }
 
         specify { full_match_fails }
+        specify { partial_match_raises_error }
       end
 
       context 'when the row is given as a hash' do
@@ -38,24 +43,28 @@ RSpec.describe 'match_result_set' do
           let(:expected_rows) { [john.values << 'yoko'] }
 
           specify { full_match_fails }
+          specify { partial_match_raises_error }
         end
 
         context 'when the actual and expected have are different' do
           let(:expected_rows) { [paul.values] }
 
           specify { full_match_fails }
+          specify { partial_match_raises_error }
         end
 
         context 'when the actual and expected rows are equal' do
           let(:expected_rows) { [john.values] }
 
           specify { full_match }
+          specify { partial_match_raises_error }
         end
 
         context 'when the actual and expected rows are equal with rspec matchers' do
           let(:expected_rows) { [[a_string_matching('John'), a_string_matching(/lennon/i), 40]] }
 
           specify { full_match }
+          specify { partial_match_raises_error }
         end
       end
 
