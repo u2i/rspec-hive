@@ -29,8 +29,15 @@ RSpec::Matchers.define :match_result_set do |expected|
   end
 
   failure_message do |actual|
-    "expected #{actual} to match result set #{expected}\n"\
-      "Diff: #{differ.diff_as_object(@diffable_actual, expected)}"
+    "expected #{actual} to match result set #{expected}\n#{diff_message(expected)}"
+  end
+
+  failure_message_when_negated do |actual|
+    "expected #{actual} not to match result set #{expected}, but did\n#{diff_message(expected)}"
+  end
+
+  def diff_message(expected)
+    "Diff: #{differ.diff_as_object(@diffable_actual, expected)}"
   end
 
   def differ
