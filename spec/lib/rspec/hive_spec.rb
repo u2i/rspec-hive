@@ -1,7 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe RSpec::Hive do
-  describe 'configure' do
+  describe '.connector' do
+    subject { described_class.connector }
+
+    it { is_expected.to be_an_instance_of(RSpec::Hive::Connector) }
+  end
+
+  describe '.configure' do
     let(:expected_host) { '127.0.0.1' }
     let(:expected_port) { '10000' }
     let(:expected_host_shared_directory_path) do

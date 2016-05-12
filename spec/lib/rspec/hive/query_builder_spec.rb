@@ -4,6 +4,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
   let(:connection) { instance_double(RBHive::TCLIConnection) }
   let(:connection_delegator) { RSpec::Hive::ConnectionDelegator.new(connection, {}) }
   let(:query_builder) { described_class.new(schema, connection_delegator) }
+  let(:schema) { double }
 
   describe '#execute' do
     subject { builder.execute }
@@ -13,7 +14,6 @@ RSpec.describe RSpec::Hive::QueryBuilder do
         expect(connection_delegator).to receive(:load_into_table).with(schema, expected_rows)
       end
 
-      let(:partition) { nil }
       let(:schema) do
         RBHive::TableSchema.new('table_name', nil) do
           column :col1, :string
@@ -130,12 +130,30 @@ RSpec.describe RSpec::Hive::QueryBuilder do
       end
     end
 
-    context 'when has no partition' do
+    context 'when has a partition' do
       let(:schema) do
         RBHive::TableSchema.new('table_name', nil) do
           column :col1, :string
           column :col2, :integer
           partition :dt, :int
+        end
+      end
+
+      before do
+        expect(connection_delegator).
+          to receive(:load_into_table).with(schema, expected_rows, partitions)
+      end
+
+      context 'when no data stubbing' do
+        context 'when single row is passed' do
+          let(:builder) { query_builder.insert(row1).partition(partitions) }
+          let(:row1) { ['col1', 343] }
+          let(:partitions) { {dt: :int} }
+          let(:expected_rows) { [row1] }
+
+          it 'loads single row' do
+            subject
+          end
         end
       end
     end

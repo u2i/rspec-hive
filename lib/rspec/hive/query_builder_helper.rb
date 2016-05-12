@@ -3,6 +3,8 @@ require_relative 'query_builder'
 module RSpec
   module Hive
     module QueryBuilderHelper
+      HiveConnectionNotFound = Class.new(StandardError)
+
       def into_hive(schema)
         hive_connection_guard!
         ::RSpec::Hive::QueryBuilder.new(schema, connection)
@@ -17,7 +19,7 @@ module RSpec
       end
 
       def hive_connection_guard!
-        raise 'Include WithHiveConnection' unless hive_connection_present?
+        raise HiveConnectionNotFound, 'Include WithHiveConnection' unless hive_connection_present?
       end
     end
   end
