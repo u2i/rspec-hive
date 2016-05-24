@@ -127,14 +127,14 @@ RSpec.describe 'match_result_set' do
   end
 
   context 'when the expected set has multiple rows' do
-    let(:ringo) { {first_name: 'Richard', last_name: 'Starkey', age: -75} }
+    let(:george) { {first_name: 'George', last_name: 'Harrison', age: 58} }
 
     context 'and the actual set has the same number of rows' do
-      let(:actual_rows) { [ringo, paul, john] }
+      let(:actual_rows) { [george, paul, john] }
 
       context 'when the row is given as an array' do
         context 'when rows are returned in order' do
-          let(:expected_rows) { [ringo.values, paul.values, john.values] }
+          let(:expected_rows) { [george.values, paul.values, john.values] }
 
           specify { full_match }
           specify { unordered_match }
@@ -142,7 +142,7 @@ RSpec.describe 'match_result_set' do
         end
 
         context 'when rows are returned in different order' do
-          let(:expected_rows) { [paul.values, john.values, ringo.values] }
+          let(:expected_rows) { [paul.values, john.values, george.values] }
 
           specify { full_match_fails }
           specify { unordered_match }
@@ -153,7 +153,7 @@ RSpec.describe 'match_result_set' do
       context 'when the row is given as a hash' do
         context 'when matching all columns' do
           context 'when rows are returned in order' do
-            let(:expected_rows) { [ringo, paul, john] }
+            let(:expected_rows) { [george, paul, john] }
 
             specify { full_match }
             specify { unordered_match }
@@ -162,7 +162,7 @@ RSpec.describe 'match_result_set' do
           end
 
           context 'when rows are returned in different order' do
-            let(:expected_rows) { [paul, john, ringo] }
+            let(:expected_rows) { [paul, john, george] }
 
             specify { full_match_fails }
             specify { unordered_match }
@@ -175,7 +175,7 @@ RSpec.describe 'match_result_set' do
           let(:expected_rows) { members.map { |member| {age: member[:age]} } }
 
           context 'when rows are returned in order' do
-            let(:members) { [ringo, paul, john] }
+            let(:members) { [george, paul, john] }
 
             specify { full_match_fails }
             specify { unordered_match_fails }
@@ -184,12 +184,79 @@ RSpec.describe 'match_result_set' do
           end
 
           context 'when rows are returned in different order' do
-            let(:members) { [john, paul, ringo] }
+            let(:members) { [john, paul, george] }
 
             specify { full_match_fails }
             specify { unordered_match_fails }
             specify { partial_match_fails }
             specify { partial_unordered_match }
+          end
+        end
+      end
+    end
+
+    context 'and the expected set has more rows' do
+      let(:ringo) { {first_name: 'Richard', last_name: 'Starkey', age: 75} }
+      let(:actual_rows) { [paul, john] }
+
+      context 'when the row is given as an array' do
+        context 'when rows are returned in order' do
+          let(:expected_rows) { [ringo.values, paul.values, john.values] }
+
+          specify { full_match_fails }
+          specify { unordered_match_fails }
+          specify { partial_match_raises_error }
+        end
+
+        context 'when rows are returned in different order' do
+          let(:expected_rows) { [paul.values, john.values, ringo.values] }
+
+          specify { full_match_fails }
+          specify { unordered_match_fails }
+          specify { partial_match_raises_error }
+        end
+      end
+
+      context 'when the row is given as a hash' do
+        context 'when matching all columns' do
+          context 'when rows are returned in order' do
+            let(:expected_rows) { [ringo, paul, john] }
+
+            specify { full_match_fails }
+            specify { unordered_match_fails }
+            specify { partial_match_fails }
+            specify { partial_unordered_match_fails }
+          end
+
+          context 'when rows are returned in different order' do
+            let(:expected_rows) { [paul, john, ringo] }
+
+            specify { full_match_fails }
+            specify { unordered_match_fails }
+            specify { partial_match_fails }
+            specify { partial_unordered_match_fails }
+          end
+        end
+
+        context 'when matching a subset of columns' do
+          let(:expected_rows) { members.map { |member| {age: member[:age]} } }
+
+          context 'when rows are returned in order' do
+            let(:members) { [ringo, paul, john] }
+
+            specify { full_match_fails }
+            specify { unordered_match_fails }
+            specify { partial_match_fails }
+            specify { partial_unordered_match_fails }
+          end
+
+          context 'when rows are returned in different order' do
+            let(:members) { [john, paul, ringo] }
+
+            specify { full_match_fails }
+            specify { unordered_match_fails }
+            specify { partial_match_fails }
+            specify { partial_unordered_match_fails }
           end
         end
       end
