@@ -229,5 +229,39 @@ RSpec.describe 'match_result_set' do
         end
       end
     end
+
+    context 'and the actual set has less rows' do
+      let(:actual_rows) { [paul, john] }
+
+      context 'when the row is given as an array' do
+        let(:expected_rows) { [ringo.values, paul.values, john.values] }
+
+        specify { full_match_fails }
+        specify { unordered_match_fails }
+        specify { partial_match_raises_error }
+      end
+
+      context 'when the row is given as a hash' do
+        context 'when matching all columns' do
+
+          let(:expected_rows) { [ringo, paul, john] }
+
+          specify { full_match_fails }
+          specify { unordered_match_fails }
+          specify { partial_match_fails }
+          specify { partial_unordered_match_fails }
+        end
+
+        context 'when matching a subset of columns' do
+          let(:expected_rows) { members.map { |member| {age: member[:age]} } }
+          let(:members) { [ringo, paul, john] }
+
+          specify { full_match_fails }
+          specify { unordered_match_fails }
+          specify { partial_match_fails }
+          specify { partial_unordered_match_fails }
+        end
+      end
+    end
   end
 end
