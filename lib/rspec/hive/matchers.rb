@@ -1,30 +1,49 @@
 require 'rspec/matchers'
 
-RSpec::Matchers.define :match_result_set do |ex|
-  match do |act|
-    actual = act
-    expected = ex
+RSpec::Matchers.define :match_result_set do |expected|
+  match do |actual|
+    array_match(expected, actual)
+    eq_match(expected, actual)
+  end
 
-    if Array === expected[0]
-      raise ArgumentError, "Can't use partially matcher with Arrays" if @partial_match
-      actual = actual.map { |r| r.values }
+  def map_hash_to_array(actual)
+    actual.map! { |r| r.values }
+  end
+
+  def sort_hash_keys!(hash)
+    hash.map! { |r| r.keys.sort.reduce({}) { |h, key| h[key] = r[key]; h } }
+  end
+
+  def remove_extra_keys!(expected, actual)
+    partial_keys = expected[0].keys
+    actual.map! { |r| r.select { |k, _| partial_keys.include?(k) } }
+  end
+
+  def eq_match(expected, actual)
+    return actual.empty? if expected.empty?
+
+    if expected[0].is_a?(Array)
+      raise ArgumentError, 'Can\'t use partially matcher with Arrays' if @partial_match
+      map_hash_to_array(actual)
     end
 
-    if @partial_match
-      partial_keys = expected[0].keys
-      actual = actual.map { |r| r.select { |k, _| partial_keys.include?(k) } }
-    end
+    remove_extra_keys!(expected, actual) if @partial_match
+
+    sort_hash_keys!(actual) if actual[0].is_a?(Hash)
+    sort_hash_keys!(expected) if expected[0].is_a?(Hash)
 
     if @unordered
-      actual = actual.sort_by(&:to_s)
-      expected = expected.sort_by(&:to_s)
+      actual.sort_by!(&:to_s)
+      expected.sort_by!(&:to_s)
     end
-
-    @array_matcher = RSpec::Matchers::BuiltIn::ContainExactly.new(expected)
-    @array_matches = @array_matcher.matches?(actual)
 
     @matcher = RSpec::Matchers::BuiltIn::Match.new(expected)
     @matcher.matches?(actual)
+  end
+
+  def array_match(expected, actual)
+    @array_matcher = RSpec::Matchers::BuiltIn::ContainExactly.new(expected)
+    @array_matches = @array_matcher.matches?(actual)
   end
 
   chain :partially do
