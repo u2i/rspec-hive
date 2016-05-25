@@ -1,9 +1,11 @@
 require 'rspec/matchers'
+require 'pp'
 
 RSpec::Matchers.define :match_result_set do |expected|
   match do |actual|
+    matches = eq_match(expected, actual)
     array_match(expected, actual)
-    eq_match(expected, actual)
+    matches
   end
 
   def map_hash_to_array(actual)
@@ -56,13 +58,25 @@ RSpec::Matchers.define :match_result_set do |expected|
 
   failure_message do |_|
     message = @matcher.failure_message
-    message += "\n" + @array_matcher.failure_message unless @array_matches
+    unless @array_matches
+      missing = @array_matcher.send(:missing_items).pretty_inspect
+      extra = @array_matcher.send(:extra_items).pretty_inspect
+
+      message += "\n"
+      message += 'missing items: ' + missing
+      message += 'extra items: ' + extra
+      message += 'diff: ' + RSpec::Support::Differ.new.diff_as_object(missing, extra).to_s
+
+    end
     message
   end
 
   failure_message_when_negated do |_|
     message = @matcher.failure_message_when_negated
-    message += "\n" + @array_matcher.failure_message_when_negated unless @array_matches
-    message
+    unless @array_matches
+      message += "\n"
+      message += 'missing items: ' + @array_matcher.send(:missing_items).pretty_inspect
+      message += 'extra items: ' + @array_matcher.send(:extra_items).pretty_inspect
+    end
   end
 end
