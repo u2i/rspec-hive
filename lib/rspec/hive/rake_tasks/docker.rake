@@ -28,10 +28,7 @@ namespace :spec do
         system 'mkdir', '-p', default_values['hive']['host_shared_directory_path']
         system 'mkdir', '-p', 'config'
 
-        file_path = File.join(
-          ENV['CONFIG_FILE_DIR'] || 'config',
-          ENV['CONFIG_FILE_NAME'] || 'rspec-hive.yml'
-        )
+        file_path = ENV['CONFIG_FILE'] || File.join('config', 'rspec-hive.yml')
 
         File.open(file_path, 'w+') do |f|
           f.write default_values.to_yaml
