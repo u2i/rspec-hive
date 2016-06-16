@@ -73,30 +73,31 @@ namespace :spec do
         system(cmd)
       end
 
-      desc 'Load Hive UDFS (user defined functions) onto docker'
-      task :load_udfs do
+      def container_id
+        return ENV['CONTAINER_ID'] if ENV['CONTAINER_ID']
+        docker_conatiners = `docker ps`.lines
+        if docker_conatiners.size != 2
+          raise 'There is more than 1 instance of docker container running (or no running docker containers). '\
+                'Check `docker ps` and stop containers that are not in use right now or specify CONTAINER_ID and run this command again.'.red
+        else
+          docker_conatiners[1].split[0]
+        end
+      end
 
-        access_key_id = ENV['ACCESS_KEY_ID']
-        secret_access_key = ENV['SECRET_ACCESS_KEY']
+      desc 'Load Hive UDFS (user defined functions) onto docker'
+      task :load_udfs, [:udfs_path] do |t, args|
+        udfs_path = args[:udfs_path]
         config_filepath = ENV['CONFIG_FILE'] || File.join('config', 'rspec-hive.yml')
         interpolated = ERB.new(File.read(config_filepath)).result
         config = YAML.load(interpolated)['hive']
-        udfs_path = ENV['UDFS_PATH'] || config['hive_udfs']['s3_path']
 
         fail 'Please provide UDFS_PATH'.red unless udfs_path
         if udfs_path.start_with?('s3://')
-          credentials = "ACCESS_KEY_ID=#{access_key_id} SECRET_ACCESS_KEY=#{secret_access_key}"
-          status = 'Downloading from s3...'
+          puts 'Downloading from s3...'.yellow
           cmd = "aws s3 ls #{udfs_path}"
-          if access_key_id and secret_access_key
-            cmd = "#{credentials} #{cmd}"
-            status << ' using custom credentials'
-          else
-            status << ' using credentials from ~/.aws/credentials'
-          end
-          puts "#{status}".yellow
+
           fail 'awscli is not configured.'.red unless system(cmd)
-          cmd = "#{credentials} aws s3 cp #{udfs_path} #{config['host_shared_directory_path']}/hive-udfs.jar"
+          cmd = "aws s3 cp #{udfs_path} #{config['host_shared_directory_path']}/hive-udfs.jar"
           system(cmd)
         else
           puts 'Copying from local directory...'.yellow
@@ -104,17 +105,6 @@ namespace :spec do
         end
         puts 'Done'.green
 
-        container_id = ENV['CONTAINER_ID']
-        if container_id.nil?
-          docker_conatiners = `docker ps`.lines
-          if docker_conatiners.size != 2
-            puts 'There is more than 1 instance of docker container running (or no running docker containers). '\
-                 'Check `docker ps` and stop containers that are not in use right now or specify CONTAINER_ID and run this command again.'.red
-            return
-          else
-            container_id = docker_conatiners[1].split[0]
-          end
-        end
 
         puts 'Copying to hadoop on docker...'.yellow
         cmd = "docker exec -it #{container_id} /bin/bash -c 'cp #{config['docker_shared_directory_path']}/hive-udfs.jar $HADOOP_HOME'"
@@ -125,17 +115,6 @@ namespace :spec do
 
     desc 'Runs beeline console on hive.'
     task :beeline do
-      container_id = ENV['CONTAINER_ID']
-      if container_id.nil?
-        docker_conatiners = `docker ps`.lines
-        if docker_conatiners.size != 2
-          puts 'There is more than 1 instance of docker container running (or no running docker containers). '\
-               'Check `docker ps` and stop containers that are not in use right now or specify CONTAINER_ID and run this command again.'.red
-          return
-        else
-          container_id = docker_conatiners[1].split[0]
-        end
-      end
       puts "Connecting to docker container: #{container_id} and running beeline. To exit: '!q'".green
       cmd = "docker exec -it #{container_id} /bin/bash -c '$HIVE_HOME/bin/beeline -u jdbc:hive2://localhost:10000 -d org.apache.hive.jdbc.HiveDriver'"
       system(cmd)
