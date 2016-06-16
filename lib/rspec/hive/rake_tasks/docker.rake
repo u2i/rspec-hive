@@ -81,27 +81,27 @@ namespace :spec do
         end
       end
 
-      desc 'Load Hive UDFS (user defined functions) onto docker'
+      desc 'Load Hive UDFS (user defined functions) onto docker.'
       task :load_udfs, [:udfs_path] do |t, args|
         udfs_path = args[:udfs_path]
         config_filepath = ENV['CONFIG_FILE'] || File.join('config', 'rspec-hive.yml')
         interpolated = ERB.new(File.read(config_filepath)).result
         config = YAML.load(interpolated)['hive']
 
+        host_hive_udfs_path = File.join(config['host_shared_directory_path'], 'hive-udfs.jar')
         fail 'Please provide UDFS_PATH'.red unless udfs_path
         if udfs_path.start_with?('s3://')
           puts 'Downloading from s3...'.yellow
           cmd = "aws s3 ls #{udfs_path}"
 
           fail 'awscli is not configured.'.red unless system(cmd)
-          cmd = "aws s3 cp #{udfs_path} #{config['host_shared_directory_path']}/hive-udfs.jar"
+          cmd = "aws s3 cp #{udfs_path} #{host_hive_udfs_path}"
           system(cmd)
         else
           puts 'Copying from local directory...'.yellow
-          cmd = "cp #{udfs_path} #{config['host_shared_directory_path']}/hive-udfs.jar"
+          cmd = "cp #{udfs_path} #{host_hive_udfs_path}"
         end
         puts 'Done'.green
-
 
         puts 'Copying to hadoop on docker...'.yellow
         cmd = "docker exec -it #{container_id} /bin/bash -c 'cp #{config['docker_shared_directory_path']}/hive-udfs.jar $HADOOP_HOME'"
