@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'rake', '~> 10.0'
+  spec.add_dependency 'rake', ['>= 10.0', '< 12.0']
   spec.add_dependency 'colorize', '~> 0.7'
   spec.add_dependency 'faker', '~> 1.6'
   spec.add_dependency 'retryable', '~> 2.0.3'
