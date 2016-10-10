@@ -9,8 +9,8 @@ RUN apt-get -qq update && \
   (echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true |  /usr/bin/debconf-set-selections) && \
   apt-get -qq install -y oracle-java8-installer oracle-java8-set-default
 
-ENV INSTALL_DIR=/opt \
-  SHARED_FOLDER=/tmp/spec-tmp-files \
+ENV INSTALL_DIR=/opt
+ENV SHARED_FOLDER=/tmp/spec-tmp-files \
   TMP_HOME=/tmp/home \
   WAREHOUSE=/tmp/warehouse \
   HADOOP_HOME=$INSTALL_DIR/hadoop \
