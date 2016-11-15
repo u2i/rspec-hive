@@ -2,6 +2,7 @@ require 'yaml'
 require 'colorize'
 require 'tmpdir'
 require 'rspec/hive'
+require 'erb'
 
 namespace :spec do
   namespace :hive do
