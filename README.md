@@ -112,6 +112,13 @@ Where we invoke:
 
     RSpec::Hive.configure(File.join(__dir__, '/config.yml'))
 
+### Loading udfs
+
+`bundle exec rake "spec:hive:docker:load_udfs[path_to_udf_on_s3]"`
+
+By default udfs will be loaded to `docker_shared_directory_path`.
+
+
 ## Note
 
 Please remember docker does not remove containers automatically, use `docker ps -a` to list all unused containers.
