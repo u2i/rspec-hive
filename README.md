@@ -47,6 +47,8 @@ You can specify following arguments:
 * CONFIG_FILE_DIR - directory where to put generated config file
 * CONFIG_FILE_NAME - name of the config file that will be generated
 
+Watch out: in some cases Rspec hive may look for config files in e.g. you're current/root directory, not in config/ folder. Make sure you've got correct config in the directory used by the gem.
+
 #### Installing Docker
 Detailed instruction may be found on https://docs.docker.com/engine/installation.
 
