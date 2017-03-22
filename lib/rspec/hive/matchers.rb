@@ -1,33 +1,51 @@
 require 'rspec/matchers'
+require 'pp'
 
 RSpec::Matchers.define :match_result_set do |expected|
   match do |actual|
-    @diffable_actual = []
+    matches = eq_match(expected, actual)
+    array_match(expected, actual)
+    matches
+  end
 
-    @actual = actual.clone
+  def map_hash_to_array(actual)
+    actual.map! { |r| r.values }
+  end
 
-    expected.map.with_index do |expected_row, i|
-      if expected_row.respond_to?(:each_pair)
-        if @partial_match
-          result_set_match?(
-            actual[i], expected_row,
-            expected_transformer: ->(e) { e.values },
-            actual_transformer: ->(candidate) { candidate.values_at(*expected_row.keys) },
-            diffable_transformer: ->(candidate) { candidate.select { |k, _v| expected_row.keys.include?(k) } }
-          )
-        else
-          result_set_match?(actual[i], expected_row)
-        end
-      elsif expected_row.respond_to?(:each)
-        raise ArgumentError, "Can't use partially matcher with Arrays" if @partial_match
-        result_set_match?(
-          actual[i], expected_row,
-          actual_transformer: ->(candidate) { candidate.values }
-        )
-      else
-        raise ArgumentError, 'Unknown type'
-      end
-    end.all? && expected.size == actual.size
+  def sort_hash_keys!(hash)
+    hash.map! { |r| r.keys.sort.reduce({}) { |h, key| h[key] = r[key]; h } }
+  end
+
+  def remove_extra_keys!(expected, actual)
+    partial_keys = expected[0].keys
+    actual.map! { |r| r.select { |k, _| partial_keys.include?(k) } }
+  end
+
+  def eq_match(expected, actual)
+    return actual.empty? if expected.empty?
+
+    if expected[0].is_a?(Array)
+      raise ArgumentError, 'Can\'t use partially matcher with Arrays' if @partial_match
+      map_hash_to_array(actual)
+    end
+
+    remove_extra_keys!(expected, actual) if @partial_match
+
+    sort_hash_keys!(actual) if actual[0].is_a?(Hash)
+    sort_hash_keys!(expected) if expected[0].is_a?(Hash)
+
+    if @unordered
+      actual.sort_by!(&:to_s)
+      expected.sort_by!(&:to_s)
+    end
+
+    @matcher = RSpec::Matchers::BuiltIn::Match.new(expected)
+    @matcher.matches?(actual)
+  end
+
+  def array_match(expected, actual)
+    @array_matcher = RSpec::Matchers::BuiltIn::ContainExactly.new(expected)
+    @array_matches = @array_matcher.matches?(actual)
   end
 
   chain :partially do
@@ -38,68 +56,27 @@ RSpec::Matchers.define :match_result_set do |expected|
     @unordered = true
   end
 
-  def result_set_match?(
-    actual, expected_row,
-    expected_transformer: ->(expected) { expected },
-    actual_transformer: ->(candidate) { candidate },
-    diffable_transformer: actual_transformer
-  )
-    if @unordered
-      unordered_result_set_match?(expected_row, expected_transformer, actual_transformer, diffable_transformer)
-    else
-      ordered_result_set_match?(actual, expected_row, expected_transformer, actual_transformer, diffable_transformer)
+  failure_message do |_|
+    message = @matcher.failure_message
+    unless @array_matches
+      missing = @array_matcher.send(:missing_items).pretty_inspect
+      extra = @array_matcher.send(:extra_items).pretty_inspect
+
+      message += "\n"
+      message += 'missing items: ' + missing
+      message += 'extra items: ' + extra
+      message += 'diff: ' + RSpec::Support::Differ.new.diff_as_object(missing, extra).to_s
+
+    end
+    message
+  end
+
+  failure_message_when_negated do |_|
+    message = @matcher.failure_message_when_negated
+    unless @array_matches
+      message += "\n"
+      message += 'missing items: ' + @array_matcher.send(:missing_items).pretty_inspect
+      message += 'extra items: ' + @array_matcher.send(:extra_items).pretty_inspect
     end
   end
-
-  def unordered_result_set_match?(expected_row, expected_transformer, actual_transformer, diffable_transformer)
-    found_index = @actual.find_index do |candidate|
-      values_match?(expected_transformer.call(expected_row), actual_transformer.call(candidate))
-    end
-    return false unless found_index
-    found = @actual[found_index]
-    @actual.delete_at(found_index)
-    @diffable_actual << diffable_transformer.call(found)
-    true
-  end
-
-  def ordered_result_set_match?(actual, expected_row, expected_transformer, actual_transformer, diffable_transformer)
-    @diffable_actual << diffable_transformer.call(actual)
-    values_match?(expected_transformer.call(expected_row), actual_transformer.call(actual))
-  end
-
-  failure_message do |actual|
-    "expected #{actual} to match result set #{expected}\n#{diff_message(expected)}"
-  end
-
-  failure_message_when_negated do |actual|
-    "expected #{actual} not to match result set #{expected}, but did\n#{diff_message(expected)}"
-  end
-
-  def diff_message(expected)
-    "Diff: #{differ.diff_as_object(@diffable_actual, expected)}"
-  end
-
-  def differ
-    RSpec::Support::Differ.new(
-      object_preparer: ->(object) { surface_descriptions_in(object) },
-      color: RSpec::Matchers.configuration.color?
-    )
-  end
-
-  # Copied and adapted from RSpec::Matchers::Composable
-  # rubocop:disable Style/CaseEquality
-  def surface_descriptions_in(item)
-    if RSpec::Matchers.is_a_describable_matcher?(item)
-      RSpec::Matchers::Composable::DescribableItem.new(item)
-    elsif Hash === item
-      Hash[surface_descriptions_in(item.to_a.sort)]
-    elsif Struct === item || unreadable_io?(item)
-      RSpec::Support::ObjectFormatter.format(item)
-    elsif should_enumerate?(item)
-      item.map { |subitem| surface_descriptions_in(subitem) }
-    else
-      item
-    end
-  end
-  # rubocop:enable Style/CaseEquality
 end

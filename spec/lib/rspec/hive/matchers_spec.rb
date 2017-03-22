@@ -27,6 +27,28 @@ RSpec.describe 'match_result_set' do
     end
   end
 
+  context 'when the expected set is empty' do
+    let(:expected_rows) { [] }
+
+    context 'and the actual set is empty' do
+      let(:actual_rows) { [] }
+
+      specify { full_match }
+      specify { unordered_match }
+      specify { partial_match }
+      specify { partial_unordered_match }
+    end
+
+    context 'and the actual set is not empty' do
+      let(:actual_rows) { [john] }
+
+      specify { full_match_fails }
+      specify { unordered_match_fails }
+      specify { partial_match_fails }
+      specify { partial_unordered_match_fails }
+    end
+  end
+
   context 'when the expected set has only one row' do
     context 'but the actual set has more rows' do
       let(:actual_rows) { [john, paul] }
@@ -153,12 +175,25 @@ RSpec.describe 'match_result_set' do
       context 'when the row is given as a hash' do
         context 'when matching all columns' do
           context 'when rows are returned in order' do
-            let(:expected_rows) { [ringo, paul, john] }
+            context 'when fields in hash are in the same order' do
+              let(:expected_rows) { [ringo, paul, john] }
 
-            specify { full_match }
-            specify { unordered_match }
-            specify { partial_match }
-            specify { partial_unordered_match }
+              specify { full_match }
+              specify { unordered_match }
+              specify { partial_match }
+              specify { partial_unordered_match }
+            end
+
+            context 'when fields in hash are in different order' do
+              let(:reversed_hash) { proc { |hash| hash.keys.reverse.reduce({}) { |h, key| h[key] = hash[key]; h } } }
+              let(:expected_rows) { [reversed_hash.call(ringo), reversed_hash.call(paul), reversed_hash.call(john)] }
+
+              specify { full_match }
+              specify { unordered_match }
+              specify { partial_match }
+              specify { partial_unordered_match }
+            end
+
           end
 
           context 'when rows are returned in different order' do
@@ -191,6 +226,40 @@ RSpec.describe 'match_result_set' do
             specify { partial_match_fails }
             specify { partial_unordered_match }
           end
+        end
+      end
+    end
+
+    context 'and the actual set has less rows' do
+      let(:actual_rows) { [paul, john] }
+
+      context 'when the row is given as an array' do
+        let(:expected_rows) { [ringo.values, paul.values, john.values] }
+
+        specify { full_match_fails }
+        specify { unordered_match_fails }
+        specify { partial_match_raises_error }
+      end
+
+      context 'when the row is given as a hash' do
+        context 'when matching all columns' do
+
+          let(:expected_rows) { [ringo, paul, john] }
+
+          specify { full_match_fails }
+          specify { unordered_match_fails }
+          specify { partial_match_fails }
+          specify { partial_unordered_match_fails }
+        end
+
+        context 'when matching a subset of columns' do
+          let(:expected_rows) { members.map { |member| {age: member[:age]} } }
+          let(:members) { [ringo, paul, john] }
+
+          specify { full_match_fails }
+          specify { unordered_match_fails }
+          specify { partial_match_fails }
+          specify { partial_unordered_match_fails }
         end
       end
     end
