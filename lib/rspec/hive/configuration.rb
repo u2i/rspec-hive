@@ -32,7 +32,7 @@ module RSpec
         @docker_shared_directory_path = '/tmp/spec-tmp-files'
         @hive_version = default_version
         @connection_timeout = default_timeout
-        @hive_options = default_hive_options
+        @hive_options = {}
       end
 
       def load_variables_from_config(config)
@@ -42,12 +42,7 @@ module RSpec
         @docker_shared_directory_path = config['docker_shared_directory_path']
         @hive_version = (config['hive_version'] || default_version).to_i
         @connection_timeout = (config['timeout'] || default_timeout).to_i
-        @hive_options = config_options(default_hive_options, config)
-      end
-
-      def config_options(hash, config)
-        config = config['hive_options'].to_h
-        config.empty? ? hash : config
+        @hive_options = config['hive_options'].to_h
       end
 
       def mac?
@@ -72,15 +67,7 @@ module RSpec
       end
 
       def default_version
-        10
-      end
-
-      def default_hive_options
-        {'hive.exec.dynamic.partition' => 'true',
-         'hive.exec.dynamic.partition.mode' => 'nonstrict',
-         'hive.exec.max.dynamic.partitions.pernodexi' => '100000',
-         'hive.exec.max.dynamic.partitions' => '100000',
-         'mapred.child.java.opts' => '-Xmx2048m'}
+        13
       end
     end
   end

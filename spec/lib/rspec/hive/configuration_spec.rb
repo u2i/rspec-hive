@@ -38,17 +38,8 @@ RSpec.describe RSpec::Hive::Configuration do
   let(:expected_docker_shared_directory_path) {'/tmp/spec-tmp-files'}
   let(:expected_hive_version) {10}
   let(:expected_timeout) {1800}
-  let(:expected_partition_flag) {'true'}
-  let(:expected_partition_mode) {'nonstrict'}
-  let(:expected_partiton_pernodexi) {'100000'}
-  let(:expected_partitions) {'100000'}
-  let(:expected_java_opts) {'-Xmx2048m'}
   let(:expected_hive_options) do
-    { 'hive.exec.dynamic.partition' => expected_partition_flag,
-      'hive.exec.dynamic.partition.mode' => expected_partition_mode,
-      'hive.exec.max.dynamic.partitions.pernodexi' => expected_partiton_pernodexi,
-      'hive.exec.max.dynamic.partitions' => expected_partitions,
-      'mapred.child.java.opts' => expected_java_opts }
+    { }
   end
 
   context 'when no configuration file is provided' do

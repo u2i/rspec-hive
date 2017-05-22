@@ -51,6 +51,8 @@ RUN tar -xzf $HIVE_BIN/hive.tar.gz --strip-components=1 -C $HIVE_HOME
 RUN rm -rf $HIVE_HOME/metastore_db/
 RUN $HIVE_HOME/bin/schematool -initSchema -dbType derby
 
+ADD ./hive-site.xml $HIVE_HOME/conf/hive-site.xml
+
 CMD $HIVE_HOME/bin/hive \
         --service hiveserver2 \
         --hiveconf hive.server2.enable.doAs=false \

@@ -23,7 +23,14 @@ namespace :spec do
               'docker_shared_directory_path' =>
                 ENV['DOCKER_SHARED_DIR'] || default_config.docker_shared_directory_path,
               'hive_version' =>
-                ENV['HIVE_VERSION'] || default_config.hive_version
+                ENV['HIVE_VERSION'] || default_config.hive_version,
+              'hive_options' => {
+                'hive.exec.dynamic.partition' => 'true',
+                'hive.exec.dynamic.partition.mode' => 'nonstrict',
+                'hive.exec.max.dynamic.partitions.pernodexi' => '100000',
+                'hive.exec.max.dynamic.partitions' => '100000',
+                'mapred.child.java.opts' => '-Xmx2048m'
+              }
             }
         }
         system 'mkdir', '-p', default_values['hive']['host_shared_directory_path']
