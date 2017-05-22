@@ -35,52 +35,52 @@ RSpec.describe RSpec::Hive::Configuration do
   let(:expected_host_shared_directory_path) do
     '/Users/Shared/tmp/spec-tmp-files'
   end
-  let(:expected_docker_shared_directory_path) { '/tmp/spec-tmp-files' }
-  let(:expected_hive_version) { 10 }
-  let(:expected_timeout) { 1800 }
-  let(:expected_partition_flag) { 'true' }
-  let(:expected_partition_mode) { 'nonstrict' }
-  let(:expected_partiton_pernodexi) { '100000' }
-  let(:expected_partitions) { '100000' }
-  let(:expected_java_opts) { '-Xmx2048m' }
+  let(:expected_docker_shared_directory_path) {'/tmp/spec-tmp-files'}
+  let(:expected_hive_version) {10}
+  let(:expected_timeout) {1800}
+  let(:expected_partition_flag) {'true'}
+  let(:expected_partition_mode) {'nonstrict'}
+  let(:expected_partiton_pernodexi) {'100000'}
+  let(:expected_partitions) {'100000'}
+  let(:expected_java_opts) {'-Xmx2048m'}
   let(:expected_hive_options) do
-    {'hive.exec.dynamic.partition' => expected_partition_flag,
-     'hive.exec.dynamic.partition.mode' => expected_partition_mode,
-     'hive.exec.max.dynamic.partitions.pernodexi' => expected_partiton_pernodexi,
-     'hive.exec.max.dynamic.partitions' => expected_partitions,
-     'mapred.child.java.opts' => expected_java_opts}
+    { 'hive.exec.dynamic.partition' => expected_partition_flag,
+      'hive.exec.dynamic.partition.mode' => expected_partition_mode,
+      'hive.exec.max.dynamic.partitions.pernodexi' => expected_partiton_pernodexi,
+      'hive.exec.max.dynamic.partitions' => expected_partitions,
+      'mapred.child.java.opts' => expected_java_opts }
   end
 
   context 'when no configuration file is provided' do
-    let(:expected_port) { 10000 }
-    let!(:original_host_os) { RbConfig::CONFIG['host_os'] }
+    let(:expected_port) {10000}
+    let!(:original_host_os) {RbConfig::CONFIG['host_os']}
 
-    before { allow(Dir).to receive(:mktmpdir) { mock_tmpdir } }
+    before {allow(Dir).to receive(:mktmpdir) {mock_tmpdir}}
 
     context 'when on Mac' do
-      let(:mock_tmpdir) { '/Users/Shared/test/' }
-      let(:expected_host) { '192.168.99.100' }
-      let(:expected_host_shared_directory_path) { '/Users/Shared/test/spec-tmp-files' }
+      let(:mock_tmpdir) {'/Users/Shared/test/'}
+      let(:expected_host) {'192.168.99.100'}
+      let(:expected_host_shared_directory_path) {'/Users/Shared/test/spec-tmp-files'}
 
       before do
         RbConfig::CONFIG['host_os'] = 'mac os'
       end
 
-      after { RbConfig::CONFIG['host_os'] = original_host_os }
+      after {RbConfig::CONFIG['host_os'] = original_host_os}
 
       include_examples('config')
     end
 
     context 'when on Linux' do
-      let(:mock_tmpdir) { '/tmp/test/' }
-      let(:expected_host) { '127.0.0.1' }
-      let(:expected_host_shared_directory_path) { '/tmp/test/spec-tmp-files' }
+      let(:mock_tmpdir) {'/tmp/test/'}
+      let(:expected_host) {'127.0.0.1'}
+      let(:expected_host_shared_directory_path) {'/tmp/test/spec-tmp-files'}
 
       before do
         RbConfig::CONFIG['host_os'] = 'linux'
       end
 
-      after { RbConfig::CONFIG['host_os'] = original_host_os }
+      after {RbConfig::CONFIG['host_os'] = original_host_os}
 
       include_examples('config')
     end
@@ -93,8 +93,8 @@ RSpec.describe RSpec::Hive::Configuration do
         f.path
       end
     end
-    let(:expected_host) { '127.0.0.2' }
-    let(:expected_port) { 10001 }
+    let(:expected_host) {'127.0.0.2'}
+    let(:expected_port) {10001}
 
     context 'where all parameters are present' do
       let(:yaml_hash) do
@@ -111,9 +111,9 @@ RSpec.describe RSpec::Hive::Configuration do
         }
       end
 
-      after { File.unlink(path_to_config_file) }
+      after {File.unlink(path_to_config_file)}
 
-      subject { described_class.new(path_to_config_file) }
+      subject {described_class.new(path_to_config_file)}
 
       include_examples('config')
     end
@@ -130,11 +130,11 @@ RSpec.describe RSpec::Hive::Configuration do
             }
         }
       end
-      let(:expected_hive_version) { 10 }
+      let(:expected_hive_version) {10}
 
-      after { File.unlink(path_to_config_file) }
+      after {File.unlink(path_to_config_file)}
 
-      subject { described_class.new(path_to_config_file) }
+      subject {described_class.new(path_to_config_file)}
 
       include_examples('config')
     end
@@ -156,13 +156,18 @@ RSpec.describe RSpec::Hive::Configuration do
             }
         }
       end
-      let(:expected_timeout) { 60 }
-      let(:expected_hive_version) { 11 }
-      let(:expected_java_opts) { '-Xmx64m' }
+      let(:expected_timeout) {60}
+      let(:expected_hive_version) {11}
+      let(:expected_java_opts) {'-Xmx64m'}
+      let(:expected_hive_options) do
+        {
+          'mapred.child.java.opts' => expected_java_opts
+        }
+      end
 
-      after { File.unlink(path_to_config_file) }
+      after {File.unlink(path_to_config_file)}
 
-      subject { described_class.new(path_to_config_file) }
+      subject {described_class.new(path_to_config_file)}
 
       include_examples('config')
     end

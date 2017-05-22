@@ -42,11 +42,12 @@ module RSpec
         @docker_shared_directory_path = config['docker_shared_directory_path']
         @hive_version = (config['hive_version'] || default_version).to_i
         @connection_timeout = (config['timeout'] || default_timeout).to_i
-        @hive_options = merge_config_options(default_hive_options, config)
+        @hive_options = config_options(default_hive_options, config)
       end
 
-      def merge_config_options(hash, config)
-        hash.merge(config['hive_options'].to_h)
+      def config_options(hash, config)
+        config = config['hive_options'].to_h
+        config.empty? ? hash : config
       end
 
       def mac?
