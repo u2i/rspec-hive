@@ -45,6 +45,7 @@ RSpec.describe RSpec::Hive::Configuration do
   context 'when no configuration file is provided' do
     let(:expected_port) { 10000 }
     let!(:original_host_os) { RbConfig::CONFIG['host_os'] }
+    let(:expected_hive_version) { 13 }
 
     before { allow(Dir).to receive(:mktmpdir) { mock_tmpdir } }
 
@@ -125,6 +126,7 @@ RSpec.describe RSpec::Hive::Configuration do
             }
         }
       end
+      let(:expected_hive_version) { 13 }
 
       after { File.unlink(path_to_config_file) }
 
