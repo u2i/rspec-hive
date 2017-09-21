@@ -37,11 +37,11 @@ RSpec.describe RSpec::Hive::Connector do
         expect(connection_delegator).to receive(:open_session).once
         expect(connection_delegator).to receive(:switch_database).
           with(db_name).once
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition=true;')
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode=nonstrict;')
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000;')
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions=100000;')
-        expect(connection_delegator).to receive(:execute).with('SET mapred.child.java.opts=-Xmx2048m;')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition=true')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode=nonstrict')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions=100000')
+        expect(connection_delegator).to receive(:execute).with('SET mapred.child.java.opts=-Xmx2048m')
         allow(configuration).to receive_message_chain(:logger, :info)
       end
 
@@ -67,11 +67,11 @@ RSpec.describe RSpec::Hive::Connector do
         expect(connection_delegator).to receive(:open_session).once
         expect(connection_delegator).to receive(:switch_database).
           with(db_random_name).once
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition=true;')
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode=nonstrict;')
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000;')
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions=100000;')
-        expect(connection_delegator).to receive(:execute).with('SET mapred.child.java.opts=-Xmx2048m;')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition=true')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode=nonstrict')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions=100000')
+        expect(connection_delegator).to receive(:execute).with('SET mapred.child.java.opts=-Xmx2048m')
         allow(configuration).to receive_message_chain(:logger, :info)
       end
 
