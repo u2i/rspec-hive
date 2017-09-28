@@ -15,9 +15,9 @@ module RSpec
         execute(table_schema.create_table_statement)
       end
 
-      def load_partitions(table_name, partitions)
-        partitions = partition_clause(partitions)
-        query = "ALTER TABLE #{table_name} ADD #{partitions}"
+      def load_partitions(table_schema, partitions)
+        partitions = partition_clause(table_schema, partitions)
+        query = "ALTER TABLE #{table_schema.name} ADD #{partitions}"
         execute(query)
       end
 
@@ -29,7 +29,7 @@ module RSpec
             values,
             table_schema.instance_variable_get(:@field_sep)
           )
-          partition_query = partition_clause(partitions) if partitions
+          partition_query = partition_clause(table_schema, partitions) if partitions
           load_file_to_hive_table(
             table_name,
             docker_path(file),
@@ -65,16 +65,21 @@ module RSpec
 
       private
 
-      def partition_clause(partitions)
+      def partition_clause(table_schema, partitions)
+        partition_types = table_schema.partitions.map { |x| [x.name, x.type] }.to_h
         if partitions.is_a?(Array)
-          partitions.collect { |x| to_partition_clause(x) }.join(' ')
+          partitions.collect { |x| to_partition_clause(partition_types, x) }.join(' ')
         else
-          to_partition_clause(partitions)
+          to_partition_clause(partition_types, partitions)
         end
       end
 
-      def to_partition_clause(partition)
-        "PARTITION(#{partition.map { |k, v| "#{k}='#{v}'" }.join(',')})"
+      def to_partition_clause(partition_types, partition)
+        "PARTITION(#{partition.map { |k, v| "#{k}=#{partition_value(v, partition_types[k])}" }.join(',')})"
+      end
+
+      def partition_value(value, value_type)
+        value_type == :int ? value : "'#{value}'"
       end
 
       def load_file_to_hive_table(table_name, path, partition_clause = nil)

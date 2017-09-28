@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe RSpec::Hive::ConnectionDelegator do
+  let(:day_column) { instance_double(RBHive::TableSchema::Column, name: :day, type: :string) }
+  let(:dth_column) { instance_double(RBHive::TableSchema::Column, name: :dth, type: :int) }
+  let(:hm_column) { instance_double(RBHive::TableSchema::Column, name: :hm, type: :int) }
+  let(:country_column) { instance_double(RBHive::TableSchema::Column, name: :country, type: :string) }
+  let(:table_name) { 'test_table' }
+  let(:table_schema) { instance_double(RBHive::TableSchema, name: table_name) }
+
   describe '#load_into_table' do
     let(:host_shared_directory_path) { '/tmp/host' }
     let(:docker_file_path) { '/tmp/docked/test_file' }
@@ -11,8 +18,6 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       )
     end
     let(:delimiter) { "\t" }
-    let(:table_name) { 'test_table' }
-    let(:table_schema) { instance_double(RBHive::TableSchema, name: table_name) }
     let(:connection) { double('Connection') }
     let(:file_mock) { double(Tempfile) }
 
@@ -50,13 +55,15 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       subject { described_class.new(connection, config) }
 
       let(:partitions) { {day: '20160101', hm: '2020'} }
+      let(:table_schema) { instance_double(RBHive::TableSchema, name: table_name, partitions: [day_column, hm_column]) }
+
       let(:partition_query) { "PARTITION(day='20160101',hm='2020')" }
 
       before do
         expect(subject).to receive(:load_file_to_hive_table).
           with(table_name, docker_file_path, partition_query).once
         expect(subject).to receive(:partition_clause).
-          with(partitions) { partition_query }
+          with(table_schema, partitions) { partition_query }
       end
 
       it do
@@ -70,11 +77,12 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
 
     let(:config) { double('Config') }
     let(:connection) { double('Connection') }
-
-    let(:table_name) { 'test_table' }
+    subject { described_class.new(connection, config) }
     let(:partitions) do
       [{dth: 'mon', country: 'us'}, {dth: 'tue', country: 'us'}]
     end
+    let(:table_schema) { instance_double(RBHive::TableSchema, name: table_name, partitions: [day_column, hm_column, country_column]) }
+
     let(:partition_query) do
       "PARTITION(dth='mon',country='us') PARTITION(dth='tue',country='us')"
     end
@@ -84,13 +92,12 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     end
 
     before do
-      expect(subject).to receive(:partition_clause).
-        with(partitions) { partition_query }
+      expect(subject).to receive(:partition_clause).with(table_schema, partitions) { partition_query }
       expect(connection).to receive(:execute).with(executed_query)
     end
 
     it do
-      subject.load_partitions(table_name, partitions)
+      subject.load_partitions(table_schema, partitions)
     end
   end
 
@@ -101,11 +108,12 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     context 'with single partition' do
       subject { described_class.new(connection, config) }
 
-      let(:partitions) { {day: '20160101', hm: '2020'} }
-      let(:partition_query) { "PARTITION(day='20160101',hm='2020')" }
+      let(:partitions) { {day: 'tue', dth: '20160101'} }
+      let(:table_schema) { instance_double(RBHive::TableSchema, partitions: [day_column, dth_column]) }
+      let(:expected_partition_query) { "PARTITION(day='tue',dth=20160101)" }
 
       it 'translates partition hash to single query' do
-        expect(subject.send(:partition_clause, partitions)).to eq(partition_query)
+        expect(subject.send(:partition_clause, table_schema, partitions)).to eq(expected_partition_query)
       end
     end
 
@@ -113,12 +121,14 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       subject { described_class.new(connection, config) }
 
       let(:partitions) { [{day: 'mon', hm: '2020'}, {day: 'tue', hm: '2020'}, {day: 'mon', hm: '2030'}] }
+      let(:table_schema) { instance_double(RBHive::TableSchema, partitions: [day_column, hm_column]) }
+
       let(:partition_query) do
-        "PARTITION(day='mon',hm='2020') PARTITION(day='tue',hm='2020') PARTITION(day='mon',hm='2030')"
+        "PARTITION(day='mon',hm=2020) PARTITION(day='tue',hm=2020) PARTITION(day='mon',hm=2030)"
       end
 
       it 'translates partition hash to combined query' do
-        expect(subject.send(:partition_clause, partitions)).to eq(partition_query)
+        expect(subject.send(:partition_clause, table_schema, partitions)).to eq(partition_query)
       end
     end
   end
@@ -148,7 +158,6 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
 
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
-    let(:table_name) { 'test_table' }
     let(:file_path) { '/tmp/test' }
     let(:execute_text) do
       "load data local inpath '/tmp/test' into table test_table"
