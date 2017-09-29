@@ -66,20 +66,20 @@ module RSpec
       private
 
       def partition_clause(table_schema, partitions)
-        partition_types = table_schema.partitions.map { |x| [x.name, x.type] }.to_h
         if partitions.is_a?(Array)
-          partitions.collect { |x| to_partition_clause(partition_types, x) }.join(' ')
+          partitions.collect { |x| to_partition_clause(table_schema, x) }.join(' ')
         else
-          to_partition_clause(partition_types, partitions)
+          to_partition_clause(table_schema, partitions)
         end
       end
 
-      def to_partition_clause(partition_types, partition)
-        "PARTITION(#{partition.map { |k, v| "#{k}=#{partition_value(v, partition_types[k])}" }.join(',')})"
+      def to_partition_clause(table_schema, partition)
+        "PARTITION(#{partition.map { |k, v| "#{k}=#{partition_value(table_schema, k, v)}" }.join(',')})"
       end
 
-      def partition_value(value, value_type)
-        value_type == :int ? value : "'#{value}'"
+      def partition_value(table_schema, key, value)
+        return value if table_schema.partitions.detect { |x| x.name == key && x.type == :int }
+        "'#{value}'"
       end
 
       def load_file_to_hive_table(table_name, path, partition_clause = nil)
