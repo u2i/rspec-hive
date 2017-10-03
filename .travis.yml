@@ -4,9 +4,8 @@ services:
   - docker
 language: ruby
 rvm:
-  - 2.1
-  - 2.2
-  - 2.3.0
+  - 2.3.3
+  - 2.4.1
 env: CONFIG_FILE_NAME=rspec-hive.yml PORT=10000 CONFIG_FILE=rspec-hive.yml
 
 before_script:
