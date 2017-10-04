@@ -47,16 +47,17 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     end
 
     context 'with partitions' do
+      subject { described_class.new(connection, config) }
+
       let(:partitions) { {day: '20160101', hm: '2020'} }
       let(:partition_query) { "PARTITION(day='20160101',hm='2020')" }
+
       before do
         expect(subject).to receive(:load_file_to_hive_table).
           with(table_name, docker_file_path, partition_query).once
         expect(subject).to receive(:partition_clause).
           with(partitions) { partition_query }
       end
-
-      subject { described_class.new(connection, config) }
 
       it do
         subject.load_into_table(table_schema, values, partitions)
@@ -65,6 +66,8 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
   end
 
   describe '#load_partition' do
+    subject { described_class.new(connection, config) }
+
     let(:config) { double('Config') }
     let(:connection) { double('Connection') }
 
@@ -86,8 +89,6 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(connection).to receive(:execute).with(executed_query)
     end
 
-    subject { described_class.new(connection, config) }
-
     it do
       subject.load_partitions(table_name, partitions)
     end
@@ -98,10 +99,10 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     let(:connection) { double('Connection') }
 
     context 'with single partition' do
+      subject { described_class.new(connection, config) }
+
       let(:partitions) { {day: '20160101', hm: '2020'} }
       let(:partition_query) { "PARTITION(day='20160101',hm='2020')" }
-
-      subject { described_class.new(connection, config) }
 
       it 'translates partition hash to single query' do
         expect(subject.send(:partition_clause, partitions)).to eq(partition_query)
@@ -109,12 +110,12 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     end
 
     context 'with multiple partitions' do
+      subject { described_class.new(connection, config) }
+
       let(:partitions) { [{day: 'mon', hm: '2020'}, {day: 'tue', hm: '2020'}, {day: 'mon', hm: '2030'}] }
       let(:partition_query) do
         "PARTITION(day='mon',hm='2020') PARTITION(day='tue',hm='2020') PARTITION(day='mon',hm='2030')"
       end
-
-      subject { described_class.new(connection, config) }
 
       it 'translates partition hash to combined query' do
         expect(subject.send(:partition_clause, partitions)).to eq(partition_query)
@@ -123,6 +124,8 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
   end
 
   describe '#write_values_to_file' do
+    subject { described_class.new(connection, config) }
+
     let(:file) { StringIO.new }
     let(:values) do
       [['a', 'b', 1],
@@ -133,7 +136,6 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     let(:delimiter) { '|' }
     let(:expected_file_content) { "a|b|1\naa|bb|22\n" }
 
-    subject { described_class.new(connection, config) }
     it 'writes values to file in correct format' do
       subject.send(:write_values_to_file, file, values, delimiter)
       file.rewind
@@ -142,6 +144,8 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
   end
 
   describe '#load_file_to_hive_table' do
+    subject { described_class.new(connection, config) }
+
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
     let(:table_name) { 'test_table' }
@@ -154,14 +158,14 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(connection).to receive(:execute).with(execute_text)
     end
 
-    subject { described_class.new(connection, config) }
-
     it do
       subject.send(:load_file_to_hive_table, table_name, file_path)
     end
   end
 
   describe '#translate_to_docker_path' do
+    subject { described_class.new(connection, config) }
+
     let(:file_mock) { double(File) }
     let(:file_name) { 'testfile' }
     let(:file_host_path) { '/tmp/host/testfile' }
@@ -180,8 +184,6 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(file_mock).to receive(:path) { file_host_path }
     end
 
-    subject { described_class.new(connection, config) }
-
     it do
       expect(subject.send(:docker_path, file_mock)).
         to eq(expected_file_path)
@@ -189,6 +191,8 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
   end
 
   describe '#show_tables' do
+    subject { described_class.new(connection, config) }
+
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
     let(:fetch_text) { 'SHOW TABLES' }
@@ -197,14 +201,14 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(connection).to receive(:fetch).with(fetch_text)
     end
 
-    subject { described_class.new(connection, config) }
-
     it do
       subject.show_tables
     end
   end
 
   describe '#create_database' do
+    subject { described_class.new(connection, config) }
+
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
     let(:db_name) { 'test' }
@@ -214,14 +218,14 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(connection).to receive(:execute).with(fetch_text)
     end
 
-    subject { described_class.new(connection, config) }
-
     it do
       subject.create_database(db_name)
     end
   end
 
   describe '#create_table' do
+    subject { described_class.new(connection, config) }
+
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
     let(:table_schema) { double('Table_schema') }
@@ -234,14 +238,14 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(connection).to receive(:execute).with(table_statement)
     end
 
-    subject { described_class.new(connection, config) }
-
     it do
       subject.create_table(table_schema)
     end
   end
 
   describe '#use databaes' do
+    subject { described_class.new(connection, config) }
+
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
     let(:db_name) { 'test' }
@@ -251,14 +255,14 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(connection).to receive(:execute).with(fetch_text)
     end
 
-    subject { described_class.new(connection, config) }
-
     it do
       subject.use_database(db_name)
     end
   end
 
   describe '#drop_databse' do
+    subject { described_class.new(connection, config) }
+
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
     let(:db_name) { 'test' }
@@ -268,14 +272,14 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(connection).to receive(:execute).with(fetch_text)
     end
 
-    subject { described_class.new(connection, config) }
-
     it do
       subject.drop_database(db_name)
     end
   end
 
   describe '#show_databases' do
+    subject { described_class.new(connection, config) }
+
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
     let(:fetch_text) { 'SHOW DATABASES' }
@@ -284,14 +288,14 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(connection).to receive(:fetch).with(fetch_text)
     end
 
-    subject { described_class.new(connection, config) }
-
     it do
       subject.show_databases
     end
   end
 
   describe '#switch database' do
+    subject { described_class.new(connection, config) }
+
     let(:connection) { double('Connection') }
     let(:config) { double('Config') }
 
@@ -301,8 +305,6 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
       expect(subject).to receive(:create_database).once
       expect(subject).to receive(:use_database).once
     end
-
-    subject { described_class.new(connection, config) }
 
     it do
       subject.switch_database(db_name)

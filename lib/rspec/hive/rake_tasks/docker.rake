@@ -49,14 +49,16 @@ namespace :spec do
       desc 'Runs docker using hive config file.'\
             ' It assumes your docker-machine is running.'
       task :run do
-        fail 'Command `docker` not found.'.red unless system('which docker')
+        raise 'Command `docker` not found.'.red unless system('which docker')
 
         config_filepath = ENV['CONFIG_FILE'] || File.join('config', 'rspec-hive.yml')
-        fail "There's no config file #{config_filepath} please"\
-             "generate default or provide custom config.".red unless File.exist? config_filepath
+        unless File.exist? config_filepath
+          raise "There's no config file #{config_filepath} please"\
+               'generate default or provide custom config.'.red
+        end
 
         interpolated = ERB.new(File.read(config_filepath)).result
-        config = YAML.load(interpolated)['hive']
+        config = YAML.safe_load(interpolated)['hive']
 
         docker_image_name = ENV['DOCKER_IMAGE_NAME'] || 'nielsensocial/hive'
         cmd = "docker run -v #{config['host_shared_directory_path']}:"\
@@ -69,7 +71,7 @@ namespace :spec do
 
       desc 'Downloads docker image from dockerhub.'
       task :download_image do
-        fail 'Command `docker` not found.'.red unless system('which docker')
+        raise 'Command `docker` not found.'.red unless system('which docker')
 
         docker_image_name = ENV['DOCKER_IMAGE_NAME'] || 'nielsensocial/hive'
 
@@ -90,19 +92,19 @@ namespace :spec do
       end
 
       desc 'Load Hive UDFS (user defined functions) onto docker.'
-      task :load_udfs, [:udfs_path] do |t, args|
+      task :load_udfs, [:udfs_path] do |_t, args|
         udfs_path = args[:udfs_path]
         config_filepath = ENV['CONFIG_FILE'] || File.join('config', 'rspec-hive.yml')
         interpolated = ERB.new(File.read(config_filepath)).result
-        config = YAML.load(interpolated)['hive']
+        config = YAML.safe_load(interpolated)['hive']
 
         host_hive_udfs_path = File.join(config['host_shared_directory_path'], 'hive-udfs.jar')
-        fail 'Please provide UDFS_PATH'.red unless udfs_path
+        raise 'Please provide UDFS_PATH'.red unless udfs_path
         if udfs_path.start_with?('s3://')
           puts 'Downloading from s3...'.yellow
           cmd = "aws s3 ls #{udfs_path}"
 
-          fail 'awscli is not configured.'.red unless system(cmd)
+          raise 'awscli is not configured.'.red unless system(cmd)
           cmd = "aws s3 cp #{udfs_path} #{host_hive_udfs_path}"
           system(cmd)
         else

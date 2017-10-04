@@ -16,6 +16,8 @@ RSpec.describe RSpec::Hive do
     let(:expected_docker_shared_directory_path) { '/tmp/spec-tmp-files' }
 
     context 'when file name is provided' do
+      subject { described_class.configure(file_name) }
+
       let(:file_name) { 'test.yaml' }
       let(:configuration_mock) do
         double(
@@ -31,8 +33,6 @@ RSpec.describe RSpec::Hive do
         expect(described_class).to receive(:new_configuration).
           with(file_name) { configuration_mock }
       end
-
-      subject { described_class.configure(file_name) }
 
       its(:host) { is_expected.to eq(expected_host) }
       its(:port) { is_expected.to eq(expected_port) }

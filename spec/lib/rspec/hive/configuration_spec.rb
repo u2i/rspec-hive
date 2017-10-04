@@ -36,8 +36,8 @@ RSpec.describe RSpec::Hive::Configuration do
     '/Users/Shared/tmp/spec-tmp-files'
   end
   let(:expected_docker_shared_directory_path) { '/tmp/spec-tmp-files' }
-  let(:expected_hive_version) { 13 }
-  let(:expected_timeout) { 1800 }
+  let(:expected_hive_version) { 10 }
+  let(:expected_timeout) { 120 }
   let(:expected_hive_options) do
     {}
   end
@@ -50,7 +50,7 @@ RSpec.describe RSpec::Hive::Configuration do
 
     context 'when on Mac' do
       let(:mock_tmpdir) { '/Users/Shared/test/' }
-      let(:expected_host) { '192.168.99.100' }
+      let(:expected_host) { '127.0.0.1' }
       let(:expected_host_shared_directory_path) { '/Users/Shared/test/spec-tmp-files' }
 
       before do
@@ -90,7 +90,7 @@ RSpec.describe RSpec::Hive::Configuration do
     context 'where all parameters are present' do
       subject { described_class.new(path_to_config_file) }
 
-      let(:expected_hive_version) { 10 }
+      let(:expected_hive_version) { 13 }
 
       let(:yaml_hash) do
         {
@@ -100,8 +100,8 @@ RSpec.describe RSpec::Hive::Configuration do
               'port' => 10001,
               'host_shared_directory_path' => expected_host_shared_directory_path,
               'docker_shared_directory_path' => expected_docker_shared_directory_path,
-              'hive_version' => '10',
-              'timeout' => 1800
+              'hive_version' => '13',
+              'timeout' => 120
             }
         }
       end
