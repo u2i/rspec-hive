@@ -5,3 +5,9 @@ Metrics/LineLength:
 
 Metrics/BlockLength:
   ExcludedMethods: ['describe', 'context']
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 5
