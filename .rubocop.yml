@@ -21,3 +21,9 @@ Metrics/LineLength:
 
 Style/SignalException:
   EnforcedStyle: only_raise
+
+Naming/FileName:
+  Exclude:
+    - Gemfile
+    - Guardfile
+    - rspec-hive.gemspec
