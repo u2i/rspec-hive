@@ -15,7 +15,7 @@ AllCops:
     - db/schema.rb
     - vendor/**/*
 
-Style/MultilineOperationIndentation:
+Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
 
 Style/Documentation:
@@ -26,14 +26,14 @@ Style/WhileUntilModifier:
   Exclude:
     - spec/**/*
 
-Style/SpaceInsideHashLiteralBraces:
+Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
   EnforcedStyleForEmptyBraces: no_space
 
 Style/MultilineBlockChain:
   Enabled: true
 
-Style/DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
   Enabled: true
 
