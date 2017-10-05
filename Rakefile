@@ -26,7 +26,7 @@ detect_docker = <<-BASH
 BASH
 
 if system(detect_docker)
-  task default: [:spec, :hive_spec, :rubocop]
+  task default: %i[spec hive_spec rubocop]
 else
-  task default: [:spec, :rubocop]
+  task default: %i[spec rubocop]
 end

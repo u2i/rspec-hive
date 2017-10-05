@@ -20,7 +20,6 @@ module RSpec
         end
 
         connection
-
       rescue Thrift::ApplicationException => e
         config.logger.fatal('An exception was thrown during start connection')
         config.logger.fatal(e)

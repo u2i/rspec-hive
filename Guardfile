@@ -13,14 +13,16 @@ group :red_green_refactor, halt_on_fail: true do
     watch('spec/spec_helper.rb') { 'spec' }
   end
 
-  guard :rspec, cmd: 'bundle exec rspec', spec_paths: ['examples/spec'] do
-    watch(%r{^examples/spec/.+_spec\.rb$})
-    watch(%r{^examples/lib/(.+)\.rb$}) { |m| "examples/spec/#{m[1]}_spec.rb" }
-    watch('examples/spec/spec_helper.rb') { 'examples/spec' }
-  end if system(detect_docker)
+  if system(detect_docker)
+    guard :rspec, cmd: 'bundle exec rspec', spec_paths: ['examples/spec'] do
+      watch(%r{^examples/spec/.+_spec\.rb$})
+      watch(%r{^examples/lib/(.+)\.rb$}) { |m| "examples/spec/#{m[1]}_spec.rb" }
+      watch('examples/spec/spec_helper.rb') { 'examples/spec' }
+    end
+  end
 
   guard :rubocop, all_on_start: false do
-    watch(%r{.+\.rb$})
+    watch(/.+\.rb$/)
     watch(%r{(?:.+/)?\.rubocop\.yml$}) { |m| File.dirname(m[0]) }
   end
 end

@@ -17,7 +17,7 @@ module RSpec
           load_default_variables
         else
           interpolated = ERB.new(File.read(path_to_config_file)).result
-          config = YAML.load(interpolated)['hive']
+          config = YAML.safe_load(interpolated)['hive']
           load_variables_from_config(config)
         end
         @logger = Logger.new(STDOUT)
@@ -26,7 +26,7 @@ module RSpec
       private
 
       def load_default_variables
-        @host = platform_specific_host
+        @host = '127.0.0.1'
         @port = 10000
         @host_shared_directory_path = platform_specific_host_shared_dir_path
         @docker_shared_directory_path = '/tmp/spec-tmp-files'
@@ -50,10 +50,6 @@ module RSpec
         host_os =~ /darwin|mac os/
       end
 
-      def platform_specific_host
-        mac? ? '192.168.99.100' : '127.0.0.1'
-      end
-
       def platform_specific_host_shared_dir_path
         if mac?
           File.join(Dir.mktmpdir(nil, '/Users/Shared'), 'spec-tmp-files')
@@ -63,11 +59,11 @@ module RSpec
       end
 
       def default_timeout
-        1800
+        120
       end
 
       def default_version
-        13
+        10
       end
     end
   end

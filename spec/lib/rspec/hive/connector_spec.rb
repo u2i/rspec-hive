@@ -24,6 +24,8 @@ RSpec.describe RSpec::Hive::Connector do
     end
 
     context 'when db_name is provided' do
+      subject { described_class.new(configuration) }
+
       let(:db_name) { 'test' }
 
       before do
@@ -45,14 +47,14 @@ RSpec.describe RSpec::Hive::Connector do
         allow(configuration).to receive_message_chain(:logger, :info)
       end
 
-      subject { described_class.new(configuration) }
-
       it do
         expect(subject.start_connection(db_name)).to equal(connection_delegator)
       end
     end
 
     context 'when db_name is not provided' do
+      subject { described_class.new(configuration) }
+
       let(:db_random_name) { 'rand123' }
 
       before do
@@ -74,8 +76,6 @@ RSpec.describe RSpec::Hive::Connector do
         expect(connection_delegator).to receive(:execute).with('SET mapred.child.java.opts=-Xmx2048m')
         allow(configuration).to receive_message_chain(:logger, :info)
       end
-
-      subject { described_class.new(configuration) }
 
       it do
         expect(subject.start_connection).to equal(connection_delegator)
