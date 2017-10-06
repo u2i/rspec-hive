@@ -107,11 +107,11 @@ namespace :spec do
 
           raise 'awscli is not configured.'.red unless system(cmd)
           cmd = "aws s3 cp #{udfs_path} #{host_hive_udfs_path}"
-          system(cmd)
         else
           puts 'Copying from local directory...'.yellow
           cmd = "cp #{udfs_path} #{host_hive_udfs_path}"
         end
+        system(cmd)
         puts 'Done'.green
 
         puts 'Copying to hadoop on docker...'.yellow
