@@ -1,4 +1,5 @@
 inherit_from: .rubocop_u2i.yml
+inherit_from: .rubocop_todo.yml
 
 Rails:
   Enabled: false
@@ -27,3 +28,6 @@ Naming/FileName:
     - Gemfile
     - Guardfile
     - rspec-hive.gemspec
+
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context']

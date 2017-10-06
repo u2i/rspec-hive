@@ -1,8 +1,0 @@
-inherit_from: "../.rubocop_u2i.yml"
-inherit_from: "../.rubocop_todo.yml"
-
-Metrics/LineLength:
-  Enabled: false
-
-Metrics/BlockLength:
-  ExcludedMethods: ['describe', 'context']

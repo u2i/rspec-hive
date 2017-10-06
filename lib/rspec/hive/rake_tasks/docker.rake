@@ -85,7 +85,8 @@ namespace :spec do
         docker_conatiners = `docker ps`.lines
         if docker_conatiners.size != 2
           raise 'There is more than 1 instance of docker container running (or no running docker containers). '\
-                'Check `docker ps` and stop containers that are not in use right now or specify CONTAINER_ID and run this command again.'.red
+                'Check `docker ps` and stop containers that are not in use right now or specify CONTAINER_ID '\
+                'and run this command again.'.red
         else
           docker_conatiners[1].split[0]
         end
@@ -114,7 +115,7 @@ namespace :spec do
         puts 'Done'.green
 
         puts 'Copying to hadoop on docker...'.yellow
-        cmd = "docker exec -it #{container_id} /bin/bash -c 'cp #{config['docker_shared_directory_path']}/hive-udfs.jar $HADOOP_HOME'"
+        cmd = "docker exec -it #{container_id} /bin/bash -c 'cp #{host_hive_udfs_path} $HADOOP_HOME'"
         system(cmd)
         puts 'Done'.green
       end
@@ -123,7 +124,8 @@ namespace :spec do
     desc 'Runs beeline console on hive.'
     task :beeline do
       puts "Connecting to docker container: #{container_id} and running beeline. To exit: '!q'".green
-      cmd = "docker exec -it #{container_id} /bin/bash -c '$HIVE_HOME/bin/beeline -u jdbc:hive2://localhost:10000 -d org.apache.hive.jdbc.HiveDriver'"
+      bash_cmd = '$HIVE_HOME/bin/beeline -u jdbc:hive2://localhost:10000 -d org.apache.hive.jdbc.HiveDriver'
+      cmd = "docker exec -it #{container_id} /bin/bash -c #{bash_cmd}"
       system(cmd)
     end
   end
