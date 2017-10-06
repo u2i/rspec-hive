@@ -82,7 +82,9 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     let(:partitions) do
       [{dth: 'mon', country: 'us'}, {dth: 'tue', country: 'us'}]
     end
-    let(:table_schema) { instance_double(RBHive::TableSchema, name: table_name, partitions: [day_column, hm_column, country_column]) }
+    let(:table_schema) do
+      instance_double(RBHive::TableSchema, name: table_name, partitions: [day_column, hm_column, country_column])
+    end
 
     let(:partition_query) do
       "PARTITION(dth='mon',country='us') PARTITION(dth='tue',country='us')"
