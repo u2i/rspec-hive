@@ -17,7 +17,7 @@ RSpec.describe RSpec::Hive::QueryBuilder::RowTransformer do
   describe '#transform' do
     subject { transformer.transform(row) }
 
-    let(:row) { { col1: real_value } }
+    let(:row) { {col1: real_value} }
     let(:real_value) { 'col1' }
     let(:fake_value) { 'lorem' }
     let(:expected_row) { [real_value, fake_value] }

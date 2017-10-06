@@ -57,7 +57,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
 
         context 'when row with single column is passed' do
           let(:builder) { query_builder.insert(row1) }
-          let(:row1) { { col1: 'col1' } }
+          let(:row1) { {col1: 'col1'} }
           let(:expected_rows) { [['col1', '\N']] }
 
           it 'fills missing columns with \N' do
@@ -67,8 +67,8 @@ RSpec.describe RSpec::Hive::QueryBuilder do
 
         context 'when multiple rows with single columns are passed' do
           let(:builder) { query_builder.insert(row1, row2) }
-          let(:row1) { { col1: 'col1' } }
-          let(:row2) { { col2: 345 } }
+          let(:row1) { {col1: 'col1'} }
+          let(:row2) { {col2: 345} }
           let(:expected_rows) { [['col1', '\N'], ['\N', 345]] }
 
           it 'fills missing columns with \N for each row' do
@@ -111,7 +111,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
 
         context 'when row with single column is passed' do
           let(:builder) { query_builder.with_stubbing.insert(row1) }
-          let(:row1) { { col1: 'col1' } }
+          let(:row1) { {col1: 'col1'} }
           let(:expected_rows) { [['col1', a_string_matching(/\d+/)]] }
 
           it 'fills missing columns with data matching column type' do
@@ -121,8 +121,8 @@ RSpec.describe RSpec::Hive::QueryBuilder do
 
         context 'when multiple rows with single columns are passed' do
           let(:builder) { query_builder.with_stubbing.insert(row1, row2) }
-          let(:row1) { { col1: 'col1' } }
-          let(:row2) { { col2: 345 } }
+          let(:row1) { {col1: 'col1'} }
+          let(:row2) { {col2: 345} }
           let(:expected_rows) { [['col1', a_string_matching(/\d+/)], [a_string_matching(/\S+/), 345]] }
 
           it 'fills missing columns with data matching column type for each row' do
@@ -145,7 +145,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
         context 'when single row is passed' do
           let(:builder) { query_builder.insert(row1).partition(partitions) }
           let(:row1) { ['col1', 343] }
-          let(:partitions) { { dt: :int } }
+          let(:partitions) { {dt: :int} }
           let(:expected_rows) { [row1] }
 
           it 'loads single row' do
