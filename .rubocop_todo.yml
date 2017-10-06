@@ -44,13 +44,6 @@ RSpec/NestedGroups:
     - 'spec/lib/rspec/hive/matchers_spec.rb'
     - 'spec/lib/rspec/hive/query_builder_spec.rb'
 
-# Offense count: 2
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: and_return, block
-RSpec/ReturnFromStub:
-  Exclude:
-    - 'spec/lib/rspec/hive/db_name_spec.rb'
-
 # Offense count: 8
 RSpec/SubjectStub:
   Exclude:
