@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec/hive/version'
 require 'rspec/hive/db_name'
 require 'rspec/hive/configuration'

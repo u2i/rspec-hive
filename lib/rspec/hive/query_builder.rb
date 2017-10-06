@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'query_builder/row_transformer'
 require_relative 'query_builder/null_strategy'
 require_relative 'query_builder/value_by_type_strategy'
