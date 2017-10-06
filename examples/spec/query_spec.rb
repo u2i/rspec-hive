@@ -69,7 +69,7 @@ RSpec.describe Query do
   end
 
   context 'with stubbing strategy' do
-    let(:input_data) { [{name: 'Michal'}, {name: 'Wojtek'}] }
+    let(:input_data) { [{ name: 'Michal' }, { name: 'Wojtek' }] }
     let(:query_result) { connection.fetch(query) }
 
     before { into_hive(schema).insert(*input_data).with_stubbing.execute }
@@ -93,7 +93,7 @@ RSpec.describe Query do
       let(:query) do
         "SELECT * FROM `#{subject.table_name}` WHERE name='Michal'"
       end
-      let(:expected_result_hash) { [{name: 'Michal'}] }
+      let(:expected_result_hash) { [{ name: 'Michal' }] }
 
       it 'returns Michal' do
         expect(query_result).to match_result_set(expected_result_hash).partially
