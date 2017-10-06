@@ -30,7 +30,7 @@ module RSpec
         def array_row(row)
           size = schema.columns.size
           missing = size - row.size
-          if missing > 0
+          if missing.positive?
             row_with_missing_columns(row)
           else
             row
