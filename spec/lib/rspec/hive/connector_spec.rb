@@ -8,11 +8,11 @@ RSpec.describe RSpec::Hive::Connector do
     let(:port) { '10000' }
     let(:options_mock) { double('options') }
     let(:hive_options) do
-      {'hive.exec.dynamic.partition' => 'true',
-       'hive.exec.dynamic.partition.mode' => 'nonstrict',
-       'hive.exec.max.dynamic.partitions.pernodexi' => '100000',
-       'hive.exec.max.dynamic.partitions' => '100000',
-       'mapred.child.java.opts' => '-Xmx2048m'}
+      { 'hive.exec.dynamic.partition' => 'true',
+        'hive.exec.dynamic.partition.mode' => 'nonstrict',
+        'hive.exec.max.dynamic.partitions.pernodexi' => '100000',
+        'hive.exec.max.dynamic.partitions' => '100000',
+        'mapred.child.java.opts' => '-Xmx2048m' }
     end
     let(:configuration) do
       double(
@@ -30,15 +30,15 @@ RSpec.describe RSpec::Hive::Connector do
 
       before do
         allow(subject).to receive(:connection_options) { options_mock }
-        expect(RBHive::TCLIConnection).to receive(:new).
-          with(host, port, options_mock) { tcli_connection }
-        expect(RSpec::Hive::ConnectionDelegator).to receive(:new).
-          with(tcli_connection, configuration) { connection_delegator }
+        expect(RBHive::TCLIConnection).to receive(:new)
+          .with(host, port, options_mock) { tcli_connection }
+        expect(RSpec::Hive::ConnectionDelegator).to receive(:new)
+          .with(tcli_connection, configuration) { connection_delegator }
 
         expect(connection_delegator).to receive(:open).once
         expect(connection_delegator).to receive(:open_session).once
-        expect(connection_delegator).to receive(:switch_database).
-          with(db_name).once
+        expect(connection_delegator).to receive(:switch_database)
+          .with(db_name).once
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition=true')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode=nonstrict')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000')
@@ -60,15 +60,15 @@ RSpec.describe RSpec::Hive::Connector do
       before do
         allow(subject).to receive(:connection_options) { options_mock }
         expect(RSpec::Hive::DbName).to receive(:random_name) { db_random_name }
-        expect(RBHive::TCLIConnection).to receive(:new).
-          with(host, port, options_mock) { tcli_connection }
-        expect(RSpec::Hive::ConnectionDelegator).to receive(:new).
-          with(tcli_connection, configuration) { connection_delegator }
+        expect(RBHive::TCLIConnection).to receive(:new)
+          .with(host, port, options_mock) { tcli_connection }
+        expect(RSpec::Hive::ConnectionDelegator).to receive(:new)
+          .with(tcli_connection, configuration) { connection_delegator }
 
         expect(connection_delegator).to receive(:open).once
         expect(connection_delegator).to receive(:open_session).once
-        expect(connection_delegator).to receive(:switch_database).
-          with(db_random_name).once
+        expect(connection_delegator).to receive(:switch_database)
+          .with(db_random_name).once
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition=true')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode=nonstrict')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000')

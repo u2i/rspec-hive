@@ -4,8 +4,8 @@ require 'rspec/hive/query_builder_helper'
 RSpec.describe 'match_result_set' do
   include RSpec::Hive::QueryBuilderHelper
 
-  let(:john) { {first_name: 'John', last_name: 'Lennon', age: 40} }
-  let(:paul) { {first_name: 'Paul', last_name: 'McCartney', age: 73} }
+  let(:john) { { first_name: 'John', last_name: 'Lennon', age: 40 } }
+  let(:paul) { { first_name: 'Paul', last_name: 'McCartney', age: 73 } }
 
   let(:full_match) { expect(actual_rows).to match_result_set(expected_rows) }
   let(:unordered_match) { expect(actual_rows).to match_result_set(expected_rows).unordered }
@@ -115,7 +115,7 @@ RSpec.describe 'match_result_set' do
         end
 
         context 'when matching a subset of columns' do
-          let(:expected_rows) { [{first_name: john[:first_name]}] }
+          let(:expected_rows) { [{ first_name: john[:first_name] }] }
 
           specify { full_match_fails }
           specify { unordered_match_fails }
@@ -127,7 +127,7 @@ RSpec.describe 'match_result_set' do
   end
 
   context 'when the expected set has multiple rows' do
-    let(:ringo) { {first_name: 'Richard', last_name: 'Starkey', age: -75} }
+    let(:ringo) { { first_name: 'Richard', last_name: 'Starkey', age: -75 } }
 
     context 'and the actual set has the same number of rows' do
       let(:actual_rows) { [ringo, paul, john] }
@@ -172,7 +172,7 @@ RSpec.describe 'match_result_set' do
         end
 
         context 'when matching a subset of columns' do
-          let(:expected_rows) { members.map { |member| {age: member[:age]} } }
+          let(:expected_rows) { members.map { |member| { age: member[:age] } } }
 
           context 'when rows are returned in order' do
             let(:members) { [ringo, paul, john] }

@@ -10,9 +10,9 @@ RSpec.describe RSpec::Hive::QueryBuilderHelper do
   describe '#into_hive' do
     context 'when no connection has been defined' do
       it 'raises and error' do
-        expect { dummy_class.into_hive(schema) }.
-          to raise_error(RSpec::Hive::QueryBuilderHelper::HiveConnectionNotFound).
-          with_message('Include WithHiveConnection')
+        expect { dummy_class.into_hive(schema) }
+          .to raise_error(RSpec::Hive::QueryBuilderHelper::HiveConnectionNotFound)
+          .with_message('Include WithHiveConnection')
       end
     end
 
