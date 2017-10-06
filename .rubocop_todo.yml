@@ -15,24 +15,3 @@ Metrics/BlockLength:
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 20
-
-# Offense count: 15
-Style/Documentation:
-  Exclude:
-    - 'spec/**/*'
-    - 'test/**/*'
-    - 'examples/lib/query.rb'
-    - 'lib/rspec/hive.rb'
-    - 'lib/rspec/hive/configuration.rb'
-    - 'lib/rspec/hive/connection_delegator.rb'
-    - 'lib/rspec/hive/connector.rb'
-    - 'lib/rspec/hive/db_name.rb'
-    - 'lib/rspec/hive/exponential_backoff.rb'
-    - 'lib/rspec/hive/query_builder.rb'
-    - 'lib/rspec/hive/query_builder/null_strategy.rb'
-    - 'lib/rspec/hive/query_builder/row_transformer.rb'
-    - 'lib/rspec/hive/query_builder/type_faker.rb'
-    - 'lib/rspec/hive/query_builder/value_by_type_strategy.rb'
-    - 'lib/rspec/hive/query_builder_helper.rb'
-    - 'lib/rspec/hive/railtie.rb'
-    - 'lib/rspec/hive/with_hive_connection.rb'
