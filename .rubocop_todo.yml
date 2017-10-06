@@ -15,11 +15,6 @@ Layout/SpaceInsideHashLiteralBraces:
   Exclude:
     - 'examples/spec/query_spec.rb'
 
-# Offense count: 1
-Lint/UselessAssignment:
-  Exclude:
-    - 'lib/rspec/hive/rake_tasks/docker.rake'
-
 # Offense count: 8
 # Configuration parameters: CountComments, ExcludedMethods.
 Metrics/BlockLength:
