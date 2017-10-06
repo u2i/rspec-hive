@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'type_faker'
 
 module RSpec
@@ -23,7 +25,7 @@ module RSpec
 
         attr_reader :schema, :strategy
 
-        HIVE_NIL = '\N'.freeze
+        HIVE_NIL = '\N'
 
         def array_row(row)
           size = schema.columns.size
