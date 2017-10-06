@@ -26,20 +26,20 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     before do
       table_schema.instance_variable_set(:@field_sep, delimiter)
 
-      expect(Tempfile).to receive(:open).
-        with(table_name, host_shared_directory_path).and_yield(file_mock)
+      expect(Tempfile).to receive(:open)
+        .with(table_name, host_shared_directory_path).and_yield(file_mock)
 
-      expect(subject).to receive(:docker_path).
-        with(file_mock) { docker_file_path }
+      expect(subject).to receive(:docker_path)
+        .with(file_mock) { docker_file_path }
 
-      expect(subject).to receive(:write_values_to_file).
-        with(file_mock, values, "\t").once
+      expect(subject).to receive(:write_values_to_file)
+        .with(file_mock, values, "\t").once
     end
 
     context 'without partitions' do
       before do
-        expect(subject).to receive(:load_file_to_hive_table).
-          with(table_name, docker_file_path, nil).once
+        expect(subject).to receive(:load_file_to_hive_table)
+          .with(table_name, docker_file_path, nil).once
 
         expect(subject).not_to receive(:partition_clause)
       end
@@ -54,16 +54,16 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     context 'with partitions' do
       subject { described_class.new(connection, config) }
 
-      let(:partitions) { {day: '20160101', hm: '2020'} }
+      let(:partitions) { { day: '20160101', hm: '2020' } }
       let(:table_schema) { instance_double(RBHive::TableSchema, name: table_name, partitions: [day_column, hm_column]) }
 
       let(:partition_query) { "PARTITION(day='20160101',hm='2020')" }
 
       before do
-        expect(subject).to receive(:load_file_to_hive_table).
-          with(table_name, docker_file_path, partition_query).once
-        expect(subject).to receive(:partition_clause).
-          with(table_schema, partitions) { partition_query }
+        expect(subject).to receive(:load_file_to_hive_table)
+          .with(table_name, docker_file_path, partition_query).once
+        expect(subject).to receive(:partition_clause)
+          .with(table_schema, partitions) { partition_query }
       end
 
       it do
@@ -77,9 +77,8 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
 
     let(:config) { double('Config') }
     let(:connection) { double('Connection') }
-    subject { described_class.new(connection, config) }
     let(:partitions) do
-      [{dth: 'mon', country: 'us'}, {dth: 'tue', country: 'us'}]
+      [{ dth: 'mon', country: 'us' }, { dth: 'tue', country: 'us' }]
     end
     let(:table_schema) { instance_double(RBHive::TableSchema, name: table_name, partitions: [day_column, hm_column, country_column]) }
 
@@ -106,10 +105,11 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     let(:connection) { double('Connection') }
 
     context 'with single partition' do
-      let(:partitions) { {day: 'tue', dth: '20160101'} }
+      subject { described_class.new(connection, config) }
+
+      let(:partitions) { { day: 'tue', dth: '20160101' } }
       let(:table_schema) { instance_double(RBHive::TableSchema, partitions: [day_column, dth_column]) }
       let(:expected_partition_query) { "PARTITION(day='tue',dth=20160101)" }
-      subject { described_class.new(connection, config) }
 
       it 'translates partition hash to single query' do
         expect(subject.send(:partition_clause, table_schema, partitions)).to eq(expected_partition_query)
@@ -119,7 +119,7 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     context 'with multiple partitions' do
       subject { described_class.new(connection, config) }
 
-      let(:partitions) { [{day: 'mon', hm: '2020'}, {day: 'tue', hm: '2020'}, {day: 'mon', hm: '2030'}] }
+      let(:partitions) { [{ day: 'mon', hm: '2020' }, { day: 'tue', hm: '2020' }, { day: 'mon', hm: '2030' }] }
       let(:table_schema) { instance_double(RBHive::TableSchema, partitions: [day_column, hm_column]) }
 
       let(:partition_query) do
@@ -193,8 +193,8 @@ RSpec.describe RSpec::Hive::ConnectionDelegator do
     end
 
     it do
-      expect(subject.send(:docker_path, file_mock)).
-        to eq(expected_file_path)
+      expect(subject.send(:docker_path, file_mock))
+        .to eq(expected_file_path)
     end
   end
 
