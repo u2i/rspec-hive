@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe RSpec::Hive::Connector do
   describe '#start_connection' do
     let(:tcli_connection) { class_double(RBHive::TCLIConnection) }
-    let(:connection_delegator) { class_double(RSpec::Hive::ConnectionDelegator) }
+    let(:connection_delegator) { double(RSpec::Hive::ConnectionDelegator) }
     let(:host) { '127.0.0.1' }
     let(:port) { '10000' }
     let(:options_mock) { double('options') }
