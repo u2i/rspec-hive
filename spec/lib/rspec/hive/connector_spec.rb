@@ -18,17 +18,18 @@ RSpec.describe RSpec::Hive::Connector do
        'mapred.child.java.opts' => '-Xmx2048m'}
     end
     let(:configuration) do
-      double(
+      instance_double(
         RSpec::Hive::Configuration,
         host: host,
         port: port,
-        hive_options: hive_options
+        hive_options: hive_options,
+        logger: instance_double(Logger)
       )
     end
 
     before do
       allow(connector).to receive(:connection_options) { options_mock }
-      allow(configuration).to receive_message_chain(:logger, :info)
+      allow(configuration.logger).to receive(:info)
     end
 
     context 'when db_name is provided' do
