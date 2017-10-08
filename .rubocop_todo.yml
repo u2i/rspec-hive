@@ -29,14 +29,6 @@ RSpec/MessageChain:
 RSpec/MessageSpies:
   EnforcedStyle: receive
 
-# Offense count: 33
-RSpec/NamedSubject:
-  Exclude:
-    - 'spec/lib/rspec/hive/connection_delegator_spec.rb'
-    - 'spec/lib/rspec/hive/connector_spec.rb'
-    - 'spec/lib/rspec/hive/query_builder/row_transformer_spec.rb'
-    - 'spec/lib/rspec/hive/query_builder_helper_spec.rb'
-
 # Offense count: 36
 # Configuration parameters: Max.
 RSpec/NestedGroups:
