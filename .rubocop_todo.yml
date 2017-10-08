@@ -18,11 +18,6 @@ RSpec/ExpectInHook:
     - 'spec/lib/rspec/hive/connector_spec.rb'
     - 'spec/lib/rspec/hive/query_builder_spec.rb'
 
-# Offense count: 2
-RSpec/MessageChain:
-  Exclude:
-    - 'spec/lib/rspec/hive/connector_spec.rb'
-
 # Offense count: 46
 # Configuration parameters: SupportedStyles.
 # SupportedStyles: have_received, receive
