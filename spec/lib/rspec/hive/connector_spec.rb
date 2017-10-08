@@ -4,6 +4,8 @@ require 'spec_helper'
 
 RSpec.describe RSpec::Hive::Connector do
   describe '#start_connection' do
+    subject(:connector) { described_class.new(configuration) }
+
     let(:tcli_connection) { class_double(RBHive::TCLIConnection) }
     let(:connection_delegator) { double(RSpec::Hive::ConnectionDelegator) }
     let(:host) { '127.0.0.1' }
@@ -26,12 +28,10 @@ RSpec.describe RSpec::Hive::Connector do
     end
 
     context 'when db_name is provided' do
-      subject { described_class.new(configuration) }
-
       let(:db_name) { 'test' }
 
       before do
-        allow(subject).to receive(:connection_options) { options_mock }
+        allow(connector).to receive(:connection_options) { options_mock }
         expect(RBHive::TCLIConnection).to receive(:new).
           with(host, port, options_mock) { tcli_connection }
         expect(RSpec::Hive::ConnectionDelegator).to receive(:new).
@@ -49,18 +49,14 @@ RSpec.describe RSpec::Hive::Connector do
         allow(configuration).to receive_message_chain(:logger, :info)
       end
 
-      it do
-        expect(subject.start_connection(db_name)).to equal(connection_delegator)
-      end
+      it { expect(connector.start_connection(db_name)).to equal(connection_delegator) }
     end
 
     context 'when db_name is not provided' do
-      subject { described_class.new(configuration) }
-
       let(:db_random_name) { 'rand123' }
 
       before do
-        allow(subject).to receive(:connection_options) { options_mock }
+        allow(connector).to receive(:connection_options) { options_mock }
         expect(RSpec::Hive::DbName).to receive(:random_name) { db_random_name }
         expect(RBHive::TCLIConnection).to receive(:new).
           with(host, port, options_mock) { tcli_connection }
@@ -79,9 +75,7 @@ RSpec.describe RSpec::Hive::Connector do
         allow(configuration).to receive_message_chain(:logger, :info)
       end
 
-      it do
-        expect(subject.start_connection).to equal(connection_delegator)
-      end
+      it { expect(connector.start_connection).to equal(connection_delegator) }
     end
   end
 end

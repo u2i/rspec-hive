@@ -15,7 +15,7 @@ RSpec.describe RSpec::Hive::QueryBuilder::RowTransformer do
   let(:missing_column_strategy) { double }
 
   describe '#transform' do
-    subject { transformer.transform(row) }
+    subject(:transformed_rows) { transformer.transform(row) }
 
     let(:row) { {col1: real_value} }
     let(:real_value) { 'col1' }
@@ -25,15 +25,15 @@ RSpec.describe RSpec::Hive::QueryBuilder::RowTransformer do
     before { allow(missing_column_strategy).to receive(:missing).with(column).and_return(fake_value) }
 
     it 'fills missing fields' do
-      expect(subject[1]).to eq(fake_value)
+      expect(transformed_rows[1]).to eq(fake_value)
     end
 
     it 'uses defined fields' do
-      expect(subject[0]).to eq(real_value)
+      expect(transformed_rows[0]).to eq(real_value)
     end
 
     it 'returns valid Rows' do
-      expect(subject).to eq(expected_row)
+      is_expected.to eq(expected_row)
     end
   end
 end

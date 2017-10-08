@@ -28,7 +28,7 @@ RSpec.describe RSpec::Hive::QueryBuilderHelper do
       end
 
       it 'returns a query_builder' do
-        expect(subject).to be_a_kind_of(RSpec::Hive::QueryBuilder)
+        is_expected.to be_a_kind_of(RSpec::Hive::QueryBuilder)
       end
     end
 
@@ -43,7 +43,7 @@ RSpec.describe RSpec::Hive::QueryBuilderHelper do
       end
 
       it 'returns a query_builder' do
-        expect(subject).to be_a_kind_of(RSpec::Hive::QueryBuilder)
+        is_expected.to be_a_kind_of(RSpec::Hive::QueryBuilder)
       end
     end
   end
