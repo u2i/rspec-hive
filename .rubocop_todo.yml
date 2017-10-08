@@ -36,12 +36,6 @@ RSpec/NestedGroups:
     - 'spec/lib/rspec/hive/matchers_spec.rb'
     - 'spec/lib/rspec/hive/query_builder_spec.rb'
 
-# Offense count: 8
-RSpec/SubjectStub:
-  Exclude:
-    - 'spec/lib/rspec/hive/connection_delegator_spec.rb'
-    - 'spec/lib/rspec/hive/connector_spec.rb'
-
 # Offense count: 34
 # Configuration parameters: IgnoreSymbolicNames.
 RSpec/VerifiedDoubles:
