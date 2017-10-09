@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'tempfile'
 
@@ -43,7 +45,7 @@ RSpec.describe RSpec::Hive::Configuration do
   end
 
   context 'when no configuration file is provided' do
-    let(:expected_port) { 10000 }
+    let(:expected_port) { 10_000 }
     let!(:original_host_os) { RbConfig::CONFIG['host_os'] }
 
     before { allow(Dir).to receive(:mktmpdir) { mock_tmpdir } }
@@ -85,7 +87,7 @@ RSpec.describe RSpec::Hive::Configuration do
       end
     end
     let(:expected_host) { '127.0.0.2' }
-    let(:expected_port) { 10001 }
+    let(:expected_port) { 10_001 }
 
     context 'where all parameters are present' do
       subject { described_class.new(path_to_config_file) }
@@ -97,7 +99,7 @@ RSpec.describe RSpec::Hive::Configuration do
           'hive' =>
             {
               'host' => '127.0.0.2',
-              'port' => 10001,
+              'port' => 10_001,
               'host_shared_directory_path' => expected_host_shared_directory_path,
               'docker_shared_directory_path' => expected_docker_shared_directory_path,
               'hive_version' => '13',
@@ -119,7 +121,7 @@ RSpec.describe RSpec::Hive::Configuration do
           'hive' =>
             {
               'host' => '127.0.0.2',
-              'port' => 10001,
+              'port' => 10_001,
               'host_shared_directory_path' => expected_host_shared_directory_path,
               'docker_shared_directory_path' => expected_docker_shared_directory_path
             }
@@ -139,7 +141,7 @@ RSpec.describe RSpec::Hive::Configuration do
           'hive' =>
             {
               'host' => '127.0.0.2',
-              'port' => 10001,
+              'port' => 10_001,
               'host_shared_directory_path' => expected_host_shared_directory_path,
               'docker_shared_directory_path' => expected_docker_shared_directory_path,
               'hive_version' => 11,

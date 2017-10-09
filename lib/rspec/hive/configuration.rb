@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'tmpdir'
 
 module RSpec
@@ -27,7 +29,7 @@ module RSpec
 
       def load_default_variables
         @host = '127.0.0.1'
-        @port = 10000
+        @port = 10_000
         @host_shared_directory_path = platform_specific_host_shared_dir_path
         @docker_shared_directory_path = '/tmp/spec-tmp-files'
         @hive_version = default_version
