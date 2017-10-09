@@ -34,20 +34,15 @@ RSpec.describe RSpec::Hive::Configuration do
     end
   end
 
-  let(:expected_host_shared_directory_path) do
-    '/Users/Shared/tmp/spec-tmp-files'
-  end
+  let(:expected_host_shared_directory_path) { '/Users/Shared/tmp/spec-tmp-files' }
   let(:expected_docker_shared_directory_path) { '/tmp/spec-tmp-files' }
-  let(:expected_hive_version) { 10 }
   let(:expected_timeout) { 120 }
-  let(:expected_hive_options) do
-    {}
-  end
+  let(:expected_hive_options) { {} }
 
   context 'when no configuration file is provided' do
     let(:expected_port) { 10_000 }
     let!(:original_host_os) { RbConfig::CONFIG['host_os'] }
-    let(:expected_hive_version) { 13 }
+    let(:expected_hive_version) { described_class::DEFAULT_VERSION }
 
     before { allow(Dir).to receive(:mktmpdir) { mock_tmpdir } }
 
@@ -93,7 +88,7 @@ RSpec.describe RSpec::Hive::Configuration do
     context 'where all parameters are present' do
       subject { described_class.new(path_to_config_file) }
 
-      let(:expected_hive_version) { 13 }
+      let(:expected_hive_version) { 12 }
 
       let(:yaml_hash) do
         {
@@ -103,7 +98,7 @@ RSpec.describe RSpec::Hive::Configuration do
               'port' => 10_001,
               'host_shared_directory_path' => expected_host_shared_directory_path,
               'docker_shared_directory_path' => expected_docker_shared_directory_path,
-              'hive_version' => '13',
+              'hive_version' => '12',
               'timeout' => 120
             }
         }
@@ -117,6 +112,7 @@ RSpec.describe RSpec::Hive::Configuration do
     context 'where there are only required parameters' do
       subject { described_class.new(path_to_config_file) }
 
+      let(:expected_hive_version) { described_class::DEFAULT_VERSION }
       let(:yaml_hash) do
         {
           'hive' =>
@@ -128,7 +124,6 @@ RSpec.describe RSpec::Hive::Configuration do
             }
         }
       end
-      let(:expected_hive_version) { 13 }
 
       after { File.unlink(path_to_config_file) }
 
