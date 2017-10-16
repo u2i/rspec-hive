@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'delegate'
 require 'tempfile'
 
@@ -83,10 +85,9 @@ module RSpec
       end
 
       def load_file_to_hive_table(table_name, path, partition_clause = nil)
-        request_txt =
-          "load data local inpath '#{path}' into table #{table_name}"
-        request_txt << " #{partition_clause}" unless partition_clause.nil?
-        execute(request_txt)
+        request_txt = "load data local inpath '#{path}' into table #{table_name}"
+        return execute(request_txt) if partition_clause.nil?
+        execute("#{request_txt} #{partition_clause}")
       end
 
       def docker_path(file)
