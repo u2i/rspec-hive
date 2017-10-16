@@ -39,14 +39,9 @@ RUN mkdir -p $HADOOP_BIN \
 
 RUN wget http://www-eu.apache.org/dist/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz -O $HADOOP_BIN/hadoop.tar.gz
 RUN wget http://www-eu.apache.org/dist/hive/hive-2.1.1/apache-hive-2.1.1-bin.tar.gz -O $HIVE_BIN/hive.tar.gz
-# RUN wget http://ftp.ps.pl/pub/apache/tez/0.8.5/apache-tez-0.8.5-bin.tar.gz -O $TEZ_BIN/tez.tar.gz
 
 RUN tar -xzf $HADOOP_BIN/hadoop.tar.gz --strip-components=1 -C $HADOOP_HOME
 RUN tar -xzf $HIVE_BIN/hive.tar.gz --strip-components=1 -C $HIVE_HOME
-# RUN tar -xzf $TEZ_BIN/tez.tar.gz --strip-components=1 -C $TEZ_HOME
-
-#CMD $HIVE_HOME/bin/hive --service metastore &
-#
 
 RUN rm -rf $HIVE_HOME/metastore_db/
 RUN $HIVE_HOME/bin/schematool -initSchema -dbType derby
