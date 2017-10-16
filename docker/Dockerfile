@@ -10,15 +10,14 @@ RUN apt-get -qq update && \
   apt-get -qq install -y oracle-java8-installer oracle-java8-set-default
 
 ENV INSTALL_DIR=/opt
-ENV SHARED_FOLDER=/tmp/spec-tmp-files \
+  SHARED_FOLDER=/tmp/spec-tmp-files \
   TMP_HOME=/tmp/home \
   WAREHOUSE=/tmp/warehouse \
   HADOOP_HOME=$INSTALL_DIR/hadoop \
   HIVE_HOME=$INSTALL_DIR/hive \
-  TEZ_HOME= $INSTALL_DIR/tez \
   JAVA_HOME=/usr
 
-RUN mkdir -p $HADOOP_HOME $HIVE_HOME $SHARED_FOLDER $TMP_HOME $WAREHOUSE $TEZ_HOME
+RUN mkdir -p $HADOOP_HOME $HIVE_HOME $SHARED_FOLDER $TMP_HOME $WAREHOUSE
 
 RUN wget http://www-eu.apache.org/dist/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz --quiet -O /tmp/hadoop.tar.gz && \
   wget http://www-eu.apache.org/dist/hive/hive-2.1.1/apache-hive-2.1.1-bin.tar.gz --quiet -O /tmp/hive.tar.gz && \
@@ -30,9 +29,6 @@ RUN rm -rf $HIVE_HOME/metastore_db/
 RUN $HIVE_HOME/bin/schematool -initSchema -dbType derby
 
 ADD ./hive-site.xml $HIVE_HOME/conf/hive-site.xml
-
-#RUN wget http://ftp.ps.pl/pub/apache/tez/0.8.5/apache-tez-0.8.5-bin.tar.gz -O /tmp/tez.tar.gz &&
-#    tar -xzf /tmp/tez.tar.gz --strip-components=1 -C $TEZ_HOME
 
 WORKDIR $TMP_HOME
 ENTRYPOINT $HIVE_HOME/bin/hive \
