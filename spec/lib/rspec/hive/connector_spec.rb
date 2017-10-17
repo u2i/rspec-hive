@@ -10,7 +10,7 @@ RSpec.describe RSpec::Hive::Connector do
     let(:hive_options) do
       {'hive.exec.dynamic.partition' => 'true',
        'hive.exec.dynamic.partition.mode' => 'nonstrict',
-       'hive.exec.max.dynamic.partitions.pernodexi' => '100000',
+       'hive.exec.max.dynamic.partitions.pernode' => '100000',
        'hive.exec.max.dynamic.partitions' => '100000',
        'mapred.child.java.opts' => '-Xmx2048m'}
     end
@@ -41,7 +41,7 @@ RSpec.describe RSpec::Hive::Connector do
           with(db_name).once
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition=true')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode=nonstrict')
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernode=100000')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions=100000')
         expect(connection_delegator).to receive(:execute).with('SET mapred.child.java.opts=-Xmx2048m')
         allow(configuration).to receive_message_chain(:logger, :info)
@@ -71,7 +71,7 @@ RSpec.describe RSpec::Hive::Connector do
           with(db_random_name).once
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition=true')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.dynamic.partition.mode=nonstrict')
-        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernodexi=100000')
+        expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions.pernode=100000')
         expect(connection_delegator).to receive(:execute).with('SET hive.exec.max.dynamic.partitions=100000')
         expect(connection_delegator).to receive(:execute).with('SET mapred.child.java.opts=-Xmx2048m')
         allow(configuration).to receive_message_chain(:logger, :info)
