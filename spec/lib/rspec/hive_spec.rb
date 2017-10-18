@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe RSpec::Hive do
@@ -10,15 +12,15 @@ RSpec.describe RSpec::Hive do
   describe '.configure' do
     let(:expected_host) { '127.0.0.1' }
     let(:expected_port) { '10000' }
-    let(:expected_host_shared_directory_path) do
-      '/Users/Shared/tmp/spec-files'
-    end
+    let(:expected_host_shared_directory_path) { '/Users/Shared/tmp/spec-files' }
     let(:expected_docker_shared_directory_path) { '/tmp/spec-tmp-files' }
 
     context 'when file name is provided' do
+      subject(:configure) { described_class.configure(file_name) }
+
       let(:file_name) { 'test.yaml' }
       let(:configuration_mock) do
-        double(
+        instance_double(
           described_class::Configuration,
           host: expected_host,
           port: expected_port,
@@ -27,21 +29,16 @@ RSpec.describe RSpec::Hive do
         )
       end
 
-      before do
-        expect(described_class).to receive(:new_configuration).
-          with(file_name) { configuration_mock }
+      before { allow(RSpec::Hive::Configuration).to receive(:new).with(file_name) { configuration_mock } }
+
+      specify do
+        expect(described_class).to receive(:new_configuration).with(file_name) { configuration_mock }
+        configure
       end
-
-      subject { described_class.configure(file_name) }
-
       its(:host) { is_expected.to eq(expected_host) }
       its(:port) { is_expected.to eq(expected_port) }
-      its(:host_shared_directory_path) do
-        is_expected.to eq(expected_host_shared_directory_path)
-      end
-      its(:docker_shared_directory_path) do
-        is_expected.to eq(expected_docker_shared_directory_path)
-      end
+      its(:host_shared_directory_path) { is_expected.to eq(expected_host_shared_directory_path) }
+      its(:docker_shared_directory_path) { is_expected.to eq(expected_docker_shared_directory_path) }
     end
 
     context 'when block is given' do
@@ -58,12 +55,8 @@ RSpec.describe RSpec::Hive do
 
       its(:host) { is_expected.to eq(expected_host) }
       its(:port) { is_expected.to eq(expected_port) }
-      its(:host_shared_directory_path) do
-        is_expected.to eq(expected_host_shared_directory_path)
-      end
-      its(:docker_shared_directory_path) do
-        is_expected.to eq(expected_docker_shared_directory_path)
-      end
+      its(:host_shared_directory_path) { is_expected.to eq(expected_host_shared_directory_path) }
+      its(:docker_shared_directory_path) { is_expected.to eq(expected_docker_shared_directory_path) }
     end
   end
 end

@@ -125,6 +125,12 @@ By default udfs will be loaded to `docker_shared_directory_path`.
 
 Please remember docker does not remove containers automatically, use `docker ps -a` to list all unused containers.
 
+## Changelog
+
+0.5.0: 
+  > Updated dockerfile to build container with hive 2.1.1 on Hadoop 2.7.3.
+  > Moved hive config to config file, default hive config is no longer provided, except for default config file generated using rake task.  
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/rspec-hive/fork )

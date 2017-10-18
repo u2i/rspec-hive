@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'tempfile'
 
@@ -32,34 +34,21 @@ RSpec.describe RSpec::Hive::Configuration do
     end
   end
 
-  let(:expected_host_shared_directory_path) do
-    '/Users/Shared/tmp/spec-tmp-files'
-  end
+  let(:expected_host_shared_directory_path) { '/Users/Shared/tmp/spec-tmp-files' }
   let(:expected_docker_shared_directory_path) { '/tmp/spec-tmp-files' }
-  let(:expected_hive_version) { 10 }
-  let(:expected_timeout) { 1800 }
-  let(:expected_partition_flag) { 'true' }
-  let(:expected_partition_mode) { 'nonstrict' }
-  let(:expected_partiton_pernodexi) { '100000' }
-  let(:expected_partitions) { '100000' }
-  let(:expected_java_opts) { '-Xmx2048m' }
-  let(:expected_hive_options) do
-    {'hive.exec.dynamic.partition' => expected_partition_flag,
-     'hive.exec.dynamic.partition.mode' => expected_partition_mode,
-     'hive.exec.max.dynamic.partitions.pernodexi' => expected_partiton_pernodexi,
-     'hive.exec.max.dynamic.partitions' => expected_partitions,
-     'mapred.child.java.opts' => expected_java_opts}
-  end
+  let(:expected_timeout) { 120 }
+  let(:expected_hive_options) { {} }
 
   context 'when no configuration file is provided' do
-    let(:expected_port) { 10000 }
+    let(:expected_port) { 10_000 }
     let!(:original_host_os) { RbConfig::CONFIG['host_os'] }
+    let(:expected_hive_version) { described_class::DEFAULT_VERSION }
 
     before { allow(Dir).to receive(:mktmpdir) { mock_tmpdir } }
 
     context 'when on Mac' do
       let(:mock_tmpdir) { '/Users/Shared/test/' }
-      let(:expected_host) { '192.168.99.100' }
+      let(:expected_host) { '127.0.0.1' }
       let(:expected_host_shared_directory_path) { '/Users/Shared/test/spec-tmp-files' }
 
       before do
@@ -88,64 +77,68 @@ RSpec.describe RSpec::Hive::Configuration do
 
   context 'when there is a configuration file' do
     let(:path_to_config_file) do
-      Tempfile.open(%w(config .yml)) do |f|
+      Tempfile.open(%w[config .yml]) do |f|
         f.write yaml_hash.to_yaml
         f.path
       end
     end
     let(:expected_host) { '127.0.0.2' }
-    let(:expected_port) { 10001 }
+    let(:expected_port) { 10_001 }
 
     context 'where all parameters are present' do
+      subject { described_class.new(path_to_config_file) }
+
+      let(:expected_hive_version) { 12 }
+
       let(:yaml_hash) do
         {
           'hive' =>
             {
               'host' => '127.0.0.2',
-              'port' => 10001,
+              'port' => 10_001,
               'host_shared_directory_path' => expected_host_shared_directory_path,
               'docker_shared_directory_path' => expected_docker_shared_directory_path,
-              'hive_version' => '10',
-              'timeout' => 1800
+              'hive_version' => '12',
+              'timeout' => 120
             }
         }
       end
 
       after { File.unlink(path_to_config_file) }
-
-      subject { described_class.new(path_to_config_file) }
 
       include_examples('config')
     end
 
     context 'where there are only required parameters' do
+      subject { described_class.new(path_to_config_file) }
+
+      let(:expected_hive_version) { described_class::DEFAULT_VERSION }
       let(:yaml_hash) do
         {
           'hive' =>
             {
               'host' => '127.0.0.2',
-              'port' => 10001,
+              'port' => 10_001,
               'host_shared_directory_path' => expected_host_shared_directory_path,
               'docker_shared_directory_path' => expected_docker_shared_directory_path
             }
         }
       end
-      let(:expected_hive_version) { 10 }
 
       after { File.unlink(path_to_config_file) }
-
-      subject { described_class.new(path_to_config_file) }
 
       include_examples('config')
     end
 
     context 'where there are some parameters required and optional' do
+      subject { described_class.new(path_to_config_file) }
+
       let(:yaml_hash) do
         {
           'hive' =>
             {
               'host' => '127.0.0.2',
-              'port' => 10001,
+              'port' => 10_001,
               'host_shared_directory_path' => expected_host_shared_directory_path,
               'docker_shared_directory_path' => expected_docker_shared_directory_path,
               'hive_version' => 11,
@@ -159,10 +152,13 @@ RSpec.describe RSpec::Hive::Configuration do
       let(:expected_timeout) { 60 }
       let(:expected_hive_version) { 11 }
       let(:expected_java_opts) { '-Xmx64m' }
+      let(:expected_hive_options) do
+        {
+          'mapred.child.java.opts' => expected_java_opts
+        }
+      end
 
       after { File.unlink(path_to_config_file) }
-
-      subject { described_class.new(path_to_config_file) }
 
       include_examples('config')
     end

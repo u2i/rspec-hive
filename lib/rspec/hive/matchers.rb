@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec/matchers'
 
 RSpec::Matchers.define :match_result_set do |expected|

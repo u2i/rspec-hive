@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'yaml'
 require 'colorize'
 require 'tmpdir'
@@ -23,7 +25,14 @@ namespace :spec do
               'docker_shared_directory_path' =>
                 ENV['DOCKER_SHARED_DIR'] || default_config.docker_shared_directory_path,
               'hive_version' =>
-                ENV['HIVE_VERSION'] || default_config.hive_version
+                ENV['HIVE_VERSION'] || default_config.hive_version,
+              'hive_options' => {
+                'hive.exec.dynamic.partition' => 'true',
+                'hive.exec.dynamic.partition.mode' => 'nonstrict',
+                'hive.exec.max.dynamic.partitions.pernode' => '100000',
+                'hive.exec.max.dynamic.partitions' => '100000',
+                'mapred.child.java.opts' => '-Xmx2048m'
+              }
             }
         }
         system 'mkdir', '-p', default_values['hive']['host_shared_directory_path']
@@ -42,14 +51,16 @@ namespace :spec do
       desc 'Runs docker using hive config file.'\
             ' It assumes your docker-machine is running.'
       task :run do
-        fail 'Command `docker` not found.'.red unless system('which docker')
+        raise 'Command `docker` not found.'.red unless system('which docker')
 
         config_filepath = ENV['CONFIG_FILE'] || File.join('config', 'rspec-hive.yml')
-        fail "There's no config file #{config_filepath} please"\
-             "generate default or provide custom config.".red unless File.exist? config_filepath
+        unless File.exist? config_filepath
+          raise "There's no config file #{config_filepath} please"\
+               'generate default or provide custom config.'.red
+        end
 
         interpolated = ERB.new(File.read(config_filepath)).result
-        config = YAML.load(interpolated)['hive']
+        config = YAML.safe_load(interpolated)['hive']
 
         docker_image_name = ENV['DOCKER_IMAGE_NAME'] || 'nielsensocial/hive'
         cmd = "docker run -v #{config['host_shared_directory_path']}:"\
@@ -62,7 +73,7 @@ namespace :spec do
 
       desc 'Downloads docker image from dockerhub.'
       task :download_image do
-        fail 'Command `docker` not found.'.red unless system('which docker')
+        raise 'Command `docker` not found.'.red unless system('which docker')
 
         docker_image_name = ENV['DOCKER_IMAGE_NAME'] || 'nielsensocial/hive'
 
@@ -76,36 +87,37 @@ namespace :spec do
         docker_conatiners = `docker ps`.lines
         if docker_conatiners.size != 2
           raise 'There is more than 1 instance of docker container running (or no running docker containers). '\
-                'Check `docker ps` and stop containers that are not in use right now or specify CONTAINER_ID and run this command again.'.red
+                'Check `docker ps` and stop containers that are not in use right now or specify CONTAINER_ID '\
+                'and run this command again.'.red
         else
           docker_conatiners[1].split[0]
         end
       end
 
       desc 'Load Hive UDFS (user defined functions) onto docker.'
-      task :load_udfs, [:udfs_path] do |t, args|
+      task :load_udfs, [:udfs_path] do |_t, args|
         udfs_path = args[:udfs_path]
         config_filepath = ENV['CONFIG_FILE'] || File.join('config', 'rspec-hive.yml')
         interpolated = ERB.new(File.read(config_filepath)).result
-        config = YAML.load(interpolated)['hive']
+        config = YAML.safe_load(interpolated)['hive']
 
         host_hive_udfs_path = File.join(config['host_shared_directory_path'], 'hive-udfs.jar')
-        fail 'Please provide UDFS_PATH'.red unless udfs_path
+        raise 'Please provide UDFS_PATH'.red unless udfs_path
         if udfs_path.start_with?('s3://')
           puts 'Downloading from s3...'.yellow
           cmd = "aws s3 ls #{udfs_path}"
 
-          fail 'awscli is not configured.'.red unless system(cmd)
+          raise 'awscli is not configured.'.red unless system(cmd)
           cmd = "aws s3 cp #{udfs_path} #{host_hive_udfs_path}"
-          system(cmd)
         else
           puts 'Copying from local directory...'.yellow
           cmd = "cp #{udfs_path} #{host_hive_udfs_path}"
         end
+        system(cmd)
         puts 'Done'.green
 
         puts 'Copying to hadoop on docker...'.yellow
-        cmd = "docker exec -it #{container_id} /bin/bash -c 'cp #{config['docker_shared_directory_path']}/hive-udfs.jar $HADOOP_HOME'"
+        cmd = "docker exec -it #{container_id} /bin/bash -c 'cp #{host_hive_udfs_path} $HADOOP_HOME'"
         system(cmd)
         puts 'Done'.green
       end
@@ -114,7 +126,8 @@ namespace :spec do
     desc 'Runs beeline console on hive.'
     task :beeline do
       puts "Connecting to docker container: #{container_id} and running beeline. To exit: '!q'".green
-      cmd = "docker exec -it #{container_id} /bin/bash -c '$HIVE_HOME/bin/beeline -u jdbc:hive2://localhost:10000 -d org.apache.hive.jdbc.HiveDriver'"
+      bash_cmd = '$HIVE_HOME/bin/beeline -u jdbc:hive2://localhost:10000 -d org.apache.hive.jdbc.HiveDriver'
+      cmd = "docker exec -it #{container_id} /bin/bash -c #{bash_cmd}"
       system(cmd)
     end
   end

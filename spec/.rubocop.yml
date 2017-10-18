@@ -1,4 +1,0 @@
-inherit_from: "../.rubocop_u2i.yml"
-
-Metrics/LineLength:
-  Enabled: false

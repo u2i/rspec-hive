@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rbhive'
 require 'tempfile'
 require 'yaml'
@@ -16,11 +18,10 @@ module RSpec
         connection = open_connection
         connection.switch_database(db_name)
         @config.hive_options.each do |key, value|
-          connection.execute("SET #{key}=#{value};")
+          connection.execute("SET #{key}=#{value}")
         end
 
         connection
-
       rescue Thrift::ApplicationException => e
         config.logger.fatal('An exception was thrown during start connection')
         config.logger.fatal(e)

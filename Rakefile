@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bundler/gem_tasks'
 load 'lib/rspec/hive/rake_tasks/docker.rake'
 
@@ -26,7 +28,7 @@ detect_docker = <<-BASH
 BASH
 
 if system(detect_docker)
-  task default: [:spec, :hive_spec, :rubocop]
+  task default: %i[spec hive_spec rubocop]
 else
-  task default: [:spec, :rubocop]
+  task default: %i[spec rubocop]
 end

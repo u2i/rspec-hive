@@ -1,10 +1,12 @@
-inherit_from: .rubocop_u2i.yml
+require: rubocop-rspec
+
+inherit_from: .rubocop_todo.yml
 
 Rails:
   Enabled: false
 
 AllCops:
-  TargetRubyVersion: 2.1
+  TargetRubyVersion: 2.3
   Include:
     - '**/Rakefile'
   Exclude:
@@ -15,9 +17,38 @@ AllCops:
 Metrics/LineLength:
   Max: 120
   Enabled: true
-  Exclude:
-    - spec/**/*
-    - examples/spec/**/*
 
 Style/SignalException:
   EnforcedStyle: only_raise
+
+Naming/FileName:
+  Exclude:
+    - Gemfile
+    - Guardfile
+    - rspec-hive.gemspec
+
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context']
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Style/Documentation:
+  Enabled: false
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+  EnforcedStyleForEmptyBraces: no_space
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+  Enabled: true
+
+Metrics/MethodLength:
+  CountComments: false  # count full line comments?
+  Max: 30
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/lib/rspec/hive/matchers_spec.rb
+
