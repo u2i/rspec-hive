@@ -1,8 +1,13 @@
+# frozen_string_literal: true
+
 require 'tmpdir'
 
 module RSpec
   module Hive
     class Configuration
+      DEFAULT_VERSION = 10
+      DEFAULT_TIMEOUT = 120
+
       attr_accessor :host,
                     :port,
                     :host_shared_directory_path,
@@ -27,11 +32,11 @@ module RSpec
 
       def load_default_variables
         @host = '127.0.0.1'
-        @port = 10000
+        @port = 10_000
         @host_shared_directory_path = platform_specific_host_shared_dir_path
         @docker_shared_directory_path = '/tmp/spec-tmp-files'
-        @hive_version = default_version
-        @connection_timeout = default_timeout
+        @hive_version = DEFAULT_VERSION
+        @connection_timeout = DEFAULT_TIMEOUT
         @hive_options = {}
       end
 
@@ -40,8 +45,8 @@ module RSpec
         @port = config['port']
         @host_shared_directory_path = config['host_shared_directory_path']
         @docker_shared_directory_path = config['docker_shared_directory_path']
-        @hive_version = (config['hive_version'] || default_version).to_i
-        @connection_timeout = (config['timeout'] || default_timeout).to_i
+        @hive_version = (config['hive_version'] || DEFAULT_VERSION).to_i
+        @connection_timeout = (config['timeout'] || DEFAULT_TIMEOUT).to_i
         @hive_options = config['hive_options'].to_h
       end
 
@@ -56,14 +61,6 @@ module RSpec
         else
           File.join(Dir.mktmpdir, 'spec-tmp-files')
         end
-      end
-
-      def default_timeout
-        120
-      end
-
-      def default_version
-        10
       end
     end
   end

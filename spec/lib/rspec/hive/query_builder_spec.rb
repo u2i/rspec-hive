@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe RSpec::Hive::QueryBuilder do
@@ -7,7 +9,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
   let(:schema) { double }
 
   describe '#execute' do
-    subject { builder.execute }
+    subject(:execute) { builder.execute }
 
     context 'when has no partition' do
       before do
@@ -28,7 +30,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [row1] }
 
           it 'loads single row' do
-            subject
+            execute
           end
         end
 
@@ -38,7 +40,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [row1 << '\N'] }
 
           it 'fills missing columns with \N' do
-            subject
+            execute
           end
         end
 
@@ -49,7 +51,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [row1, row2] }
 
           it 'loads multiple rows' do
-            subject
+            execute
           end
         end
 
@@ -59,7 +61,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [['col1', '\N']] }
 
           it 'fills missing columns with \N' do
-            subject
+            execute
           end
         end
 
@@ -70,7 +72,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [['col1', '\N'], ['\N', 345]] }
 
           it 'fills missing columns with \N for each row' do
-            subject
+            execute
           end
         end
       end
@@ -82,7 +84,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [row1] }
 
           it 'loads single row' do
-            subject
+            execute
           end
         end
 
@@ -92,7 +94,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [row1 << a_string_matching(/\d+/)] }
 
           it 'fills missing column with data matching column type' do
-            subject
+            execute
           end
         end
 
@@ -103,7 +105,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [row1, row2] }
 
           it 'loads multiple rows' do
-            subject
+            execute
           end
         end
 
@@ -113,7 +115,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [['col1', a_string_matching(/\d+/)]] }
 
           it 'fills missing columns with data matching column type' do
-            subject
+            execute
           end
         end
 
@@ -124,7 +126,7 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [['col1', a_string_matching(/\d+/)], [a_string_matching(/\S+/), 345]] }
 
           it 'fills missing columns with data matching column type for each row' do
-            subject
+            execute
           end
         end
       end
@@ -139,11 +141,6 @@ RSpec.describe RSpec::Hive::QueryBuilder do
         end
       end
 
-      before do
-        expect(connection_delegator).
-          to receive(:load_into_table).with(schema, expected_rows, partitions)
-      end
-
       context 'when no data stubbing' do
         context 'when single row is passed' do
           let(:builder) { query_builder.insert(row1).partition(partitions) }
@@ -152,7 +149,8 @@ RSpec.describe RSpec::Hive::QueryBuilder do
           let(:expected_rows) { [row1] }
 
           it 'loads single row' do
-            subject
+            expect(connection_delegator).to receive(:load_into_table).with(schema, expected_rows, partitions)
+            execute
           end
         end
       end
