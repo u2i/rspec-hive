@@ -24,7 +24,6 @@ RUN wget http://www-eu.apache.org/dist/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.t
   tar -xzf /tmp/hadoop.tar.gz --strip-components=1 -C $HADOOP_HOME && \
   tar -xzf /tmp/hive.tar.gz --strip-components=1 -C $HIVE_HOME
 
-
 RUN rm -rf $HIVE_HOME/metastore_db/
 RUN $HIVE_HOME/bin/schematool -initSchema -dbType derby
 

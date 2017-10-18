@@ -29,7 +29,7 @@ namespace :spec do
               'hive_options' => {
                 'hive.exec.dynamic.partition' => 'true',
                 'hive.exec.dynamic.partition.mode' => 'nonstrict',
-                'hive.exec.max.dynamic.partitions.pernodexi' => '100000',
+                'hive.exec.max.dynamic.partitions.pernode' => '100000',
                 'hive.exec.max.dynamic.partitions' => '100000',
                 'mapred.child.java.opts' => '-Xmx2048m'
               }
