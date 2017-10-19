@@ -2,11 +2,11 @@ PATH
   remote: .
   specs:
     rspec-hive (0.6.0)
-      colorize (~> 0.7)
+      colorize (~> 0.8.0)
       faker (~> 1.6)
-      rake (>= 10.0, < 12.0)
-      rbhive-u2i (~> 1.0.0)
-      retryable (~> 2.0.3)
+      rake (>= 10.0, < 13.0)
+      rbhive-u2i (~> 1.0)
+      retryable (~> 2.0)
       rspec (~> 3.4)
 
 GEM
