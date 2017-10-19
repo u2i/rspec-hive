@@ -52,3 +52,6 @@ RSpec/DescribeClass:
   Exclude:
     - spec/lib/rspec/hive/matchers_spec.rb
 
+Style/Encoding:
+  Exclude:
+    - 'rspec-hive.gemspec'
