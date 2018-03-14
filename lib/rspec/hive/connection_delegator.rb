@@ -25,19 +25,19 @@ module RSpec
 
       def load_into_table(table_schema, values, partitions = nil)
         table_name = table_schema.name
-        Tempfile.open(table_name, @config.host_shared_directory_path) do |file|
-          write_values_to_file(
-            file,
-            values,
-            table_schema.instance_variable_get(:@field_sep)
-          )
+#        Tempfile.open(table_name, @config.host_shared_directory_path) do |file|
+#          write_values_to_file(
+#            file,
+#            values,
+#            table_schema.instance_variable_get(:@field_sep)
+#          )
           partition_query = partition_clause(table_schema, partitions) if partitions
           load_file_to_hive_table(
             table_name,
-            docker_path(file),
+            values,
             partition_query
           )
-        end
+#        end
       end
 
       def show_tables
@@ -75,19 +75,9 @@ module RSpec
         end
       end
 
-      def to_partition_clause(table_schema, partition)
-        "PARTITION(#{partition.map { |k, v| "#{k}=#{partition_value(table_schema, k, v)}" }.join(',')})"
-      end
-
-      def partition_value(table_schema, key, value)
-        return value if table_schema.partitions.detect { |x| x.name == key && x.type == :int }
-        "'#{value}'"
-      end
-
-      def load_file_to_hive_table(table_name, path, partition_clause = nil)
-        request_txt = "load data local inpath '#{path}' into table #{table_name}"
-        return execute(request_txt) if partition_clause.nil?
-        execute("#{request_txt} #{partition_clause}")
+      def load_file_to_hive_table(table_name, values, partition_clause = nil)
+        request_txt = "INSERT INTO TABLE #{table_name} #{partition_clause} VALUES #{values_clause(values)}"
+        execute(request_txt)
       end
 
       def docker_path(file)
@@ -97,9 +87,24 @@ module RSpec
         )
       end
 
+      def values_clause(values)
+        values.map do |value_row|
+          "(#{value_row.join(", ")})"
+        end.join(", ")
+      end
+
       def write_values_to_file(file, values, delimiter = ';')
         values.each { |value| file.puts(value.join(delimiter)) }
         file.flush
+      end
+
+      def to_partition_clause(table_schema, partition)
+        "PARTITION(#{partition.map { |k, v| "#{k}=#{partition_value(table_schema, k, v)}" }.join(',')})"
+      end
+
+      def partition_value(table_schema, key, value)
+        return value if table_schema.partitions.detect { |x| x.name == key && x.type == :int }
+        "'#{value}'"
       end
     end
   end

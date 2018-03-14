@@ -5,7 +5,7 @@ module RSpec
     class QueryBuilder
       class NullStrategy
         def missing(_column)
-          '\N'
+          nil
         end
       end
     end

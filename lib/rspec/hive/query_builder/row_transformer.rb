@@ -6,6 +6,8 @@ module RSpec
   module Hive
     class QueryBuilder
       class RowTransformer
+        HIVE_NIL = 'null'
+
         def initialize(schema, missing_column_strategy)
           @schema = schema
           @strategy = missing_column_strategy
@@ -25,16 +27,15 @@ module RSpec
 
         attr_reader :schema, :strategy
 
-        HIVE_NIL = '\N'
-
         def array_row(row)
           size = schema.columns.size
           missing = size - row.size
-          if missing.positive?
-            row_with_missing_columns(row)
-          else
-            row
-          end
+          row_with_defaults = if missing.positive?
+                                row_with_missing_columns(row)
+                              else
+                                row
+                              end
+          row_with_defaults.map{|value| quote(value)}
         end
 
         def row_with_missing_columns(row)
@@ -52,12 +53,18 @@ module RSpec
 
           schema.columns.map do |column|
             value = symbolized_row.fetch(column.name.to_sym) { strategy.missing(column) }
-            nil_to_null(value)
+            quote(value)
           end
         end
 
-        def nil_to_null(value)
-          value.nil? ? HIVE_NIL : value
+        def quote(value)
+          if value.nil?
+            HIVE_NIL
+          elsif value.is_a?(String)
+            "'#{value.gsub("\n", "\\\n").gsub('"', '\\\"').gsub("'", "\\\'")}'"
+          else
+            value
+          end
         end
       end
     end
