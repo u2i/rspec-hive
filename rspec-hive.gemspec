@@ -20,10 +20,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'colorize', '~> 0.8.0'
-  spec.add_dependency 'faker', '~> 1.6'
+  spec.add_dependency 'colorize', '~> 0.8.1'
+  spec.add_dependency 'faker', '~> 1.9'
   spec.add_dependency 'rake', ['>= 10.0']
   spec.add_dependency 'rbhive-u2i', '~> 1.0'
   spec.add_dependency 'retryable', '~> 3.0'
-  spec.add_dependency 'rspec', '~> 3.4'
+  spec.add_dependency 'rspec', '~> 3.11.0'
 end
