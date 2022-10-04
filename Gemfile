@@ -7,9 +7,9 @@ gemspec
 group :test do
   gem 'bundler'
   gem 'codeclimate-test-reporter', '~> 0.4'
-  gem 'rspec-its', '~> 1.2'
-  gem 'rubocop', '~> 0.51.0'
-  gem 'rubocop-rspec', '~> 1.19.0'
+  gem 'rspec-its'
+  gem 'rubocop', '~> 1.36.0'
+  gem 'rubocop-rspec', '~> 2.13.2'
 end
 
 group :development do

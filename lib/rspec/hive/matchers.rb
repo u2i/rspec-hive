@@ -22,6 +22,7 @@ RSpec::Matchers.define :match_result_set do |expected|
         end
       elsif expected_row.respond_to?(:each)
         raise ArgumentError, "Can't use partially matcher with Arrays" if @partial_match
+
         result_set_match?(
           actual[i], expected_row,
           actual_transformer: ->(candidate) { candidate.values }
@@ -58,6 +59,7 @@ RSpec::Matchers.define :match_result_set do |expected|
       values_match?(expected_transformer.call(expected_row), actual_transformer.call(candidate))
     end
     return false unless found_index
+
     found = @actual[found_index]
     @actual.delete_at(found_index)
     @diffable_actual << diffable_transformer.call(found)

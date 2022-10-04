@@ -81,12 +81,14 @@ module RSpec
 
       def partition_value(table_schema, key, value)
         return value if table_schema.partitions.detect { |x| x.name == key && x.type == :int }
+
         "'#{value}'"
       end
 
       def load_file_to_hive_table(table_name, path, partition_clause = nil)
         request_txt = "load data local inpath '#{path}' into table #{table_name}"
         return execute(request_txt) if partition_clause.nil?
+
         execute("#{request_txt} #{partition_clause}")
       end
 
