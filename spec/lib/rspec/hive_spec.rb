@@ -35,6 +35,7 @@ RSpec.describe RSpec::Hive do
         expect(described_class).to receive(:new_configuration).with(file_name) { configuration_mock }
         configure
       end
+
       its(:host) { is_expected.to eq(expected_host) }
       its(:port) { is_expected.to eq(expected_port) }
       its(:host_shared_directory_path) { is_expected.to eq(expected_host_shared_directory_path) }

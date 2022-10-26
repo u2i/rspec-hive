@@ -2,19 +2,11 @@ require: rubocop-rspec
 
 inherit_from: .rubocop_todo.yml
 
-Rails:
-  Enabled: false
-
 AllCops:
-  TargetRubyVersion: 2.3
-  Include:
-    - '**/Rakefile'
-  Exclude:
-    - spec/spec_helper.rb
-    - vendor/**/*
-    - examples/query_spec.rb
+  TargetRubyVersion: 2.7
+  NewCops: enable
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
   Enabled: true
 
@@ -26,9 +18,6 @@ Naming/FileName:
     - Gemfile
     - Guardfile
     - rspec-hive.gemspec
-
-Metrics/BlockLength:
-  ExcludedMethods: ['describe', 'context']
 
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented

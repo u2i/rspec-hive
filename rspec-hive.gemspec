@@ -1,7 +1,7 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'rspec/hive/version'
 
@@ -18,13 +18,12 @@ Gem::Specification.new do |spec|
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'colorize', '~> 0.8.0'
-  spec.add_dependency 'faker', '~> 1.6'
-  spec.add_dependency 'rake', ['>= 10.0', '< 13.0']
+  spec.add_dependency 'colorize', '~> 0.8.1'
+  spec.add_dependency 'faker', '~> 1.9'
+  spec.add_dependency 'rake', ['>= 10.0']
   spec.add_dependency 'rbhive-u2i', '~> 1.0'
   spec.add_dependency 'retryable', '~> 3.0'
-  spec.add_dependency 'rspec', '~> 3.4'
+  spec.add_dependency 'rspec', '~> 3.11.0'
 end
